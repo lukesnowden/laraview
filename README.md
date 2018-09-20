@@ -33,11 +33,23 @@ php artisan laraview:compile
 php artisan laraview:view
 ```
 
+coming soon...
+
 ## Region Generator
 
 ```cli
 php artisan laraview:region
 ```
+
+coming soon...
+
+## Element Generator
+
+```cli
+php artisan laraview:element
+```
+
+coming soon...
 
 ## MIT License
 
