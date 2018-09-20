@@ -27,6 +27,18 @@ And finally run the following command to generate your view files
 php artisan laraview:compile
 ```
 
+## View Generator
+
+```cli
+php artisan laraview:view
+```
+
+## Region Generator
+
+```cli
+php artisan laraview:region
+```
+
 ## MIT License
 
 Copyright (c) 2018 Luke Snowden

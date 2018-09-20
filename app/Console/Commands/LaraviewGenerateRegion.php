@@ -36,24 +36,20 @@ class LaraviewGenerateRegion extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \ReflectionException
      */
     public function handle()
     {
-        //$name = $this->ask( 'What is the name of your region (singular)?' );
-        //$viewClass = $this->ask( 'What is the full path class name of the View this region is for?' );
-
-        $name =  'left hand column';
-        $viewClass = 'Laraview\Laraview\ProductEdit\ProductEditView';
+        $name = $this->ask( 'What is the name of your region (singular)?' );
+        $viewClass = $this->ask( 'What is the full path class name of the View this region is for?' );
+        $placeholder = $this->ask( 'What placeholder would you like to use for this region?' );
 
         if( ! class_exists( '\\' . $viewClass ) ) {
             $this->error( "{$viewClass} does not exist" );
             exit;
         }
 
-        $this->generate( $name, $viewClass );
+        $this->generate( $name, $viewClass, $placeholder );
 
     }
 
@@ -62,12 +58,14 @@ class LaraviewGenerateRegion extends Command
      * @param $viewClass
      * @throws \ReflectionException
      */
-    private function generate( $name, $viewClass )
+    private function generate( $name, $viewClass, $placeholder )
     {
         $path = $this->getPath( $viewClass );
         $className = ucfirst( camel_case( preg_replace( '/[^\d\w]/', '_', $name ) ) );
-        $content = $this->getContent( $className, $viewClass );
-        file_put_contents( $path . 'Regions' . DIRECTORY_SEPARATOR . "{$className}Region.php", $content );
+        $content = $this->getContent( $className, $viewClass, $placeholder );
+        $filePath = $path . 'Regions' . DIRECTORY_SEPARATOR . "{$className}Region.php";
+        file_put_contents( $filePath, $content );
+        $this->info( "{$filePath} created!" );
     }
 
     /**
@@ -87,7 +85,7 @@ class LaraviewGenerateRegion extends Command
      * @return mixed
      * @throws \ReflectionException
      */
-    private function getContent( $className, $viewClass )
+    private function getContent( $className, $viewClass, $placeholder )
     {
         $file = file_get_contents( base_path( 'stubs/region.stub' ) );
         return str_replace( [
@@ -98,7 +96,8 @@ class LaraviewGenerateRegion extends Command
         ], [
             $this->getAppNamespace(),
             $this->getViewFolderName( $viewClass ),
-            $className . 'Region'
+            $className . 'Region',
+            $placeholder
         ], $file );
     }
 

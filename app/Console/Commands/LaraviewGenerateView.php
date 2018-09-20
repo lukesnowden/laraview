@@ -69,7 +69,9 @@ class LaraviewGenerateView extends Command
         ], file_get_contents( base_path( 'stubs/view.stub' ) ) );
         $this->createRelatedFoldersFor( $folderName );
         $this->createTemplate( $folderName );
-        file_put_contents( app_path( "Laraview/{$folderName}/{$folderName}View.php" ), $file );
+        $filePath = app_path( "Laraview/{$folderName}/{$folderName}View.php" );
+        file_put_contents( $filePath, $file );
+        $this->info( "{$filePath} created!" );
     }
 
     /**

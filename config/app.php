@@ -155,10 +155,6 @@ return [
          * Application Service Providers...
          */
         Laraview\Providers\AppServiceProvider::class,
-        Laraview\Providers\AuthServiceProvider::class,
-        // Laraview\Providers\BroadcastServiceProvider::class,
-        Laraview\Providers\EventServiceProvider::class,
-        Laraview\Providers\RouteServiceProvider::class,
         Laraview\Providers\DemoServiceProvider::class
 
     ],
