@@ -1,0 +1,29 @@
+<?php
+
+namespace [NAMESPACE]Laraview\[FOLDER_NAME];
+
+use Laraview\Libs\Blueprints\ViewBlueprint;
+use Laraview\Libs\BaseView;
+
+class [VIEW_CLASS_NAME] extends BaseView implements ViewBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $path = '[PATH]';
+
+    /**
+     * @var string
+     */
+    protected $baseViewPath = '[BASE_VIEW_PATH]';
+
+    /**
+     * Regions to attach to this view
+     * @var array
+     */
+    protected $regions = [
+
+    ];
+
+}

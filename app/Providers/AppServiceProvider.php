@@ -4,8 +4,9 @@ namespace Laraview\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Laraview\Console\Commands\LaraviewCompiler;
+use Laraview\Console\Commands\LaraviewGenerateRegion;
+use Laraview\Console\Commands\LaraviewGenerateView;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
-use Laraview\Libs\Demo\PagesEditView;
 use Laraview\Libs\Register;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,7 +29,9 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->commands([
-            LaraviewCompiler::class
+            LaraviewCompiler::class,
+            LaraviewGenerateView::class,
+            LaraviewGenerateRegion::class
         ]);
     }
 }

@@ -1,0 +1,23 @@
+<?php
+
+namespace [NAMESPACE]Laraview\[VIEW_NAME]\Regions;
+
+use Laraview\Libs\Blueprints\RegionBlueprint;
+use Laraview\Libs\BaseRegion;
+
+class [CLASS_NAME] extends BaseRegion implements RegionBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $placeholder = '[PLACEHOLDER]';
+
+    /**
+     * @var array
+     */
+    protected $elements = [
+
+    ];
+
+}
