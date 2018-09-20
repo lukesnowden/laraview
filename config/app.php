@@ -159,7 +159,7 @@ return [
         // Laraview\Providers\BroadcastServiceProvider::class,
         Laraview\Providers\EventServiceProvider::class,
         Laraview\Providers\RouteServiceProvider::class,
-        \Laraview\Providers\DemoServiceProvider::class
+        Laraview\Providers\DemoServiceProvider::class
 
     ],
 
