@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "lukesnowden/laraview",
+    "description": "Generates views for laravel applications",
+    "keywords": ["laravel", "views", "blade"],
     "license": "MIT",
     "type": "project",
     "require": {
