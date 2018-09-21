@@ -196,16 +196,15 @@ Now all we need to do is compile everything down into the blade file.
 If you now open up the generated file you should see this;
 
 ```blade
-
 @extends( 'app' ) 
 @section( 'main' )
 <div class="container">
 	<div class="left-column col-8">
-		<div>
+		<div class="form-group">
 			<label for="forename-input">Forename</label>
 			<input name="forename" id="forename-input" placeholder="John..." class="form-control" value="{{ old('forename') }}" />
 		</div>
-		<div>
+		<div class="form-group">
 			<label for="surname">Surname</label>
 			<input name="surname" id="surname" class="form-control" value="{{ old('surname') }}" />
 		</div>
