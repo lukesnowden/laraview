@@ -51,6 +51,13 @@ php artisan laraview:element
 
 coming soon...
 
+I would now suggest creating a new service provider to register your new view;
+
+```cli
+php artisan make:provider ViewServiceProvider
+```
+
+Once created, register your new view in the `boot` method inside a `booted` closure like so;
 
 ```php
 <?php
@@ -61,7 +68,7 @@ use Illuminate\Support\ServiceProvider;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use MyApp\Laraview\ProductEdit\ProductEditView;
 
-class DemoServiceProvider extends ServiceProvider
+class ViewServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
