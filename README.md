@@ -84,6 +84,49 @@ class ViewServiceProvider extends ServiceProvider
 }
 ```
 
+## Hooking into foreign regions 
+
+If like us, you like to split your applications up into modules, sometimes a module 
+will intrude onto one and others regions.
+
+For instance, creating a module for `Google Shopping Feed`, we would like to add 
+a checkbox and drop down onto the product edit view to indicated that said product
+is to be added and to which Google Shopping category.
+
+We can do this by listening to when the region is attached and then insert our 
+elements using the regions `insertElement` method. Very soon, there will also 
+be an `insertElementBefore` and `insertElementAfter` methods available.
+
+```php
+<?php
+
+namespace MyApp\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Laraview\Libs\Blueprints\RegisterBlueprint;
+use MyApp\Laraview\ProductEdit\ProductEditView;
+
+class ViewServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->app->booted( function( $app ) {
+            $app[ RegisterBlueprint::class ]->attachView( new ProductEditView );
+        });
+        app( 'events' )->listen( LeftHandColumn::class . '.attached', function( $region ) {
+            $region->insertElement( GoogleCheckoutCheckboxElement::class );
+            $region->insertElement( GoogleCheckoutSelectElement::class );
+        });
+    }
+}
+```
+
+
 ## MIT License
 
 Copyright (c) 2018 Luke Snowden
