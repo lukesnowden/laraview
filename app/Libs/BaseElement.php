@@ -38,7 +38,7 @@ abstract class BaseElement implements ElementBlueprint
      */
     protected function wrapper( $content )
     {
-        return sprintf( '<div>%s</div>', $content );
+        return sprintf( '<div class="form-group">%s</div>', $content );
     }
 
     /**
