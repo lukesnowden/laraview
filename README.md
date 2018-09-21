@@ -51,6 +51,32 @@ php artisan laraview:element
 
 coming soon...
 
+
+```php
+<?php
+
+namespace MyApp\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Laraview\Libs\Blueprints\RegisterBlueprint;
+use MyApp\Laraview\ProductEdit\ProductEditView;
+
+class DemoServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->app->booted( function( $app ) {
+            $app[ RegisterBlueprint::class ]->attachView( new ProductEditView );
+        });
+    }
+}
+```
+
 ## MIT License
 
 Copyright (c) 2018 Luke Snowden
