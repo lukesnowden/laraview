@@ -22,7 +22,7 @@ class DemoServiceProvider extends ServiceProvider
         });
 
         app( 'events' )->listen( GeneralTabRegion::class . '.attached', function( $region ) {
-            $region->attachElement( SurnameTextElement::class );
+            $region->insertElement( SurnameTextElement::class );
         });
     }
 

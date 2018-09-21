@@ -32,13 +32,31 @@ abstract class BaseRegion implements RegionBlueprint
      * @return $this
      * @throws Exception
      */
-    public function attachElement( $element )
+    public function insertElement( $element )
     {
         $this->elements[ $element ] = new $element;
         if( ! $this->elements[ $element ] instanceof ElementBlueprint ) {
             throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
         }
         return $this;
+    }
+
+    /**
+     * @param $element
+     * @param $targetElement
+     */
+    public function insertElementBefore( $element, $targetElement )
+    {
+
+    }
+
+    /**
+     * @param $element
+     * @param $targetElement
+     */
+    public function insertElementAfter( $element, $targetElement )
+    {
+
     }
 
     /**

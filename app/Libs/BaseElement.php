@@ -23,11 +23,6 @@ abstract class BaseElement implements ElementBlueprint
     protected $attributes = [];
 
     /**
-     * @return mixed
-     */
-    abstract public function render();
-
-    /**
      * @param $content
      * @param $for
      * @return string
@@ -72,5 +67,10 @@ abstract class BaseElement implements ElementBlueprint
      * @return string
      */
     abstract protected function element();
+
+    /**
+     * @return mixed
+     */
+    abstract public function render();
 
 }

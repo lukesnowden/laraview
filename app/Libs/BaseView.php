@@ -4,9 +4,10 @@ namespace Laraview\Libs;
 
 use Exception;
 use ReflectionClass;
+use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
 
-abstract class BaseView
+abstract class BaseView implements ViewBlueprint
 {
 
     /**

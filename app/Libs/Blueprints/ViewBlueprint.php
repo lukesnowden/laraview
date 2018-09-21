@@ -11,4 +11,14 @@ interface ViewBlueprint
      */
     public function retrieveRegion( string $region );
 
+    /**
+     * @return mixed
+     */
+    public function path();
+
+    /**
+     * @return string
+     */
+    public function render();
+
 }
