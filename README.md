@@ -29,10 +29,10 @@ php artisan laraview:compile
 
 ## Walk-through
 
-Included is demo service provider which you can use to figure out how this package works but I'd also 
+Included is a demo service provider which you can use to figure out how this package works but I'd also 
 like to provide a walk-through to demonstrate how this package can be used in a production application.
 
-Lets imagine we have an admin panel which has a users section where you can edit a users details. Lets 
+Lets imagine we have an admin panel which has a users section where you can edit a user's details. Lets 
 create that View: 
 
 ### View Generator
@@ -43,8 +43,8 @@ php artisan laraview:view
 
 ![ViewCommand](./readme/laraview-view--customer.edit.png)
 
-The View stub has now been created and located in `app/Laraview/CustomerEdit/`. We can now register 
-this View, I suggest creating a new service provider to keep things clean:
+The `View` stub has now been created and located in `app/Laraview/CustomerEdit/`. We can now register 
+this `View`, I suggest creating a new service provider to keep things clean:
 
 ```cli
 php artisan make:provider ViewServiceProvider
@@ -52,7 +52,7 @@ php artisan make:provider ViewServiceProvider
 
 Add this new provider to the `config/app.php`.
 
-In the boot method of the View service provider register the new View using the `Register` object;
+In the boot method of the View service provider register the new `View` using the `Register` object;
 
 ```php
 <?php
@@ -83,7 +83,7 @@ class ViewServiceProvider extends ServiceProvider
 Along with the stub 
 a `template.blade.php` has been created which is used to structure your `Regions`. Lets alter it 
 slightly to incorporate two regions, `Left Column` and `Right Column`. We can define these using 
-`placeholders`:
+`Placeholders`:
 
 ```blade
 @extends( 'app' )
@@ -102,7 +102,7 @@ slightly to incorporate two regions, `Left Column` and `Right Column`. We can de
 
 ### Region Generator
 
-Now we have the view setup lets create two new `Regions`, LEFT_COLUMN and RIGHT_COLUMN;
+Now we have the view setup lets create two new `Regions`, `LEFT_COLUMN` and `RIGHT_COLUMN`;
 
 ```cli
 php artisan laraview:region
@@ -110,8 +110,8 @@ php artisan laraview:region
 
 ![ViewCommand](./readme/laraview-region--customer.edit.png)
 
-Now you will two more files generated in `app/Laraview/CustomerEdit/Regions`. Lets register 
-these regions onto our View.
+Now you will have two more files generated in `app/Laraview/CustomerEdit/Regions`. Lets register 
+these regions onto our `View`.
 
 ```php
 <?php
@@ -154,11 +154,11 @@ class CustomerEditView extends BaseView implements ViewBlueprint
 php artisan laraview:element
 ```
 
-Lets now add a couple of input elements to the left column, forename and surname.
+Lets now add a couple of input elements to the `Left Column`, forename and surname.
 
 ![ViewCommand](./readme/laraview-element--customer.edit.png)
 
-Lets now register these elements to the Region.
+Lets now register these `Elements` to the `Region`.
 
 ```php
 <?php
