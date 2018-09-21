@@ -44,9 +44,7 @@ class LaraviewGenerateElement extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \ReflectionException
      */
     public function handle()
     {
@@ -54,24 +52,31 @@ class LaraviewGenerateElement extends Command
         $elementType = $this->choice( "What kind of element would you like to create?", $this->elements );
 
         switch( $elementType ) {
-            case  0 :
-                $this->textElement( $region );
+            case  'Text' :
+                $file = $this->textElement( $region );
             break;
-            case 1 :
-                $this->selectElement( $region );
+            case 'Select' :
+                $file = $this->selectElement( $region );
             break;
-            case 2 :
-                $this->checkboxElement( $region );
+            case 'Checkbox' :
+                $file = $this->checkboxElement( $region );
             break;
-            case 3 :
-                $this->radioElement( $region );
+            case 'Radio' :
+                $file = $this->radioElement( $region );
             break;
         }
+
+        $this->info( "{$file} element created!" );
     }
 
+    /**
+     * @param $region
+     * @return string
+     * @throws \ReflectionException
+     */
     private function textElement( $region )
     {
-        $path = $this->generateFile(
+        return $this->generateFile(
             __DIR__ . '/../../../stubs/elements/text.stub',
             $region,
             $this->getNameOfElement(),
@@ -81,22 +86,55 @@ class LaraviewGenerateElement extends Command
         );
     }
 
+    /**
+     * @param $region
+     * @return string
+     * @throws \ReflectionException
+     */
     private function selectElement( $region )
     {
-        $name = $this->getNameOfElement();
-        $label = $this->getElementsLabel();
+        return $this->generateSelectFile(
+            __DIR__ . '/../../../stubs/elements/select.stub',
+            $region,
+            $this->getNameOfElement(),
+            $this->getElementsLabel(),
+            $this->getAttributes(),
+            $this->getSelectOptions()
+        );
     }
 
+    /**
+     * @param $region
+     * @return string
+     * @throws \ReflectionException
+     */
     private function checkboxElement( $region )
     {
-        $name = $this->getNameOfElement();
-        $label = $this->getElementsLabel();
+        return $this->generateFile(
+            __DIR__ . '/../../../stubs/elements/checkbox.stub',
+            $region,
+            $this->getNameOfElement(),
+            $this->getElementsLabel(),
+            $this->getAttributes(),
+            'checkbox'
+        );
     }
 
+    /**
+     * @param $region
+     * @return string
+     * @throws \ReflectionException
+     */
     private function radioElement( $region )
     {
-        $name = $this->getNameOfElement();
-        $label = $this->getElementsLabel();
+        return $this->generateFile(
+            __DIR__ . '/../../../stubs/elements/radio.stub',
+            $region,
+            $this->getNameOfElement(),
+            $this->getElementsLabel(),
+            $this->getAttributes(),
+            'radio'
+        );
     }
 
     /**
@@ -139,6 +177,61 @@ class LaraviewGenerateElement extends Command
     }
 
     /**
+     * @param $region
+     * @return mixed
+     */
+    private function getView( $region )
+    {
+        $view = app( RegisterBlueprint::class )->getViewForRegion( $region );
+        if( is_null( $view ) ) {
+            $this->error( "Region {$region} is not currently registered to a view. Please register and then create your elements." );
+            exit;
+        }
+        return $view;
+    }
+
+    /**
+     * @param array $attributes
+     * @return string
+     */
+    private function stringifyAsArray( array $attributes )
+    {
+        $html = '';
+        foreach( $attributes as $name => $value ) {
+            $html .= "'{$name}' => '{$value}',\n\t\t";
+        }
+        return trim( $html );
+    }
+
+    /**
+     * @param string $namespace
+     * @return string
+     */
+    private function createFoldersReturnPathForNamespace( string $namespace )
+    {
+        $namespace = preg_replace( '/^' . preg_quote( $this->getAppNamespace(), '/' ) . '/', '', $namespace );
+        $folders = explode( '\\', $namespace );
+        $path = app_path();
+        while( $folders ) {
+            $path .= DIRECTORY_SEPARATOR . array_shift( $folders );
+            if( ! file_exists( $path ) ) {
+                mkdir( $path, 0655 );
+            }
+        }
+        return $path . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @return array|mixed
+     */
+    private function getSelectOptions()
+    {
+        return $this->keyPair(
+            $this->ask( "Please enter options in key:value format separated with a comma (a:Apple,b:Pear)" )
+        );
+    }
+
+    /**
      * @return array|mixed
      */
     private function getAttributes()
@@ -146,7 +239,17 @@ class LaraviewGenerateElement extends Command
         if( ! $this->confirm( "Would you like to add attributes to the input element?", true ) ) {
             return [];
         }
-        $attributes = $this->ask( "Please enter attributes in key:value format separated with a comma (a:Apple,b:Pear)" );
+        return $this->keyPair(
+            $this->ask( "Please enter attributes in key:value format separated with a comma (a:Apple,b:Pear)" )
+        );
+    }
+
+    /**
+     * @param $attributes
+     * @return array
+     */
+    private function keyPair( $attributes )
+    {
         $chunks = array_map( 'trim', explode( ',', $attributes ) );
         $attributes = [];
         foreach( $chunks as $choice ) {
@@ -167,6 +270,7 @@ class LaraviewGenerateElement extends Command
      * @param $label
      * @param array $attributes
      * @param string $type
+     * @return string
      * @throws \ReflectionException
      */
     private function generateFile( string $path, string $region, string $name, $label, array $attributes, string $type )
@@ -193,7 +297,7 @@ class LaraviewGenerateElement extends Command
                 $className,
                 $name,
                 $label,
-                $this->stringifyAttributes( $attributes ),
+                $this->stringifyAsArray( $attributes ),
                 $viewShortClassName,
                 $regionShortClassName,
             ],
@@ -201,51 +305,55 @@ class LaraviewGenerateElement extends Command
         );
         $path = $this->createFoldersReturnPathForNamespace( $this->getAppNamespace() . "Laraview\\{$viewShortClassName}\Regions\\{$regionShortClassName}\Elements" );
         file_put_contents( $path . $className . '.php', $contents );
+        return $path . $className . '.php';
     }
 
     /**
-     * @param $region
-     * @return mixed
-     */
-    private function getView( $region )
-    {
-        $view = app( RegisterBlueprint::class )->getViewForRegion( $region );
-        if( is_null( $view ) ) {
-            $this->error( "Region {$region} is not currently registered to a view. Please register and then create your elements." );
-            exit;
-        }
-        return $view;
-    }
-
-    /**
+     * @param string $path
+     * @param string $region
+     * @param string $name
+     * @param $label
      * @param array $attributes
+     * @param array $options
      * @return string
+     * @throws \ReflectionException
      */
-    private function stringifyAttributes( array $attributes )
+    private function generateSelectFile( string $path, string $region, string $name, $label, array $attributes, array $options )
     {
-        $html = '';
-        foreach( $attributes as $name => $value ) {
-            $html .= "'{$name}' => '{$value}',\n\t\t";
-        }
-        return trim( $html );
-    }
+        $type = 'select';
+        $view = $this->getView( $region );
+        $viewShortClassName = rtrim( ( new ReflectionClass( $view ) )->getShortName(), 'View' );
+        $regionShortClassName = rtrim( ( new ReflectionClass( $region ) )->getShortName(), 'Region' );
 
-    /**
-     * @param string $namespace
-     * @return string
-     */
-    private function createFoldersReturnPathForNamespace( string $namespace )
-    {
-        $namespace = preg_replace( '/^' . preg_quote( $this->getAppNamespace(), '/' ) . '/', '', $namespace );
-        $folders = explode( '\\', $namespace );
-        $path = app_path();
-        while( $folders ) {
-            $path .= DIRECTORY_SEPARATOR . array_shift( $folders );
-            if( ! file_exists( $path ) ) {
-                mkdir( $path, 0655 );
-            }
-        }
-        return $path . DIRECTORY_SEPARATOR;
+        $classifiedName = ucfirst( camel_case( $name ) );
+        $className = $classifiedName . ucfirst( $type ) . 'Element';
+
+        $contents = str_replace(
+            [
+                '[NAMESPACE]',
+                '[CLASS_NAME]',
+                '[NAME]',
+                '[LABEL]',
+                '[ATTRIBUTES]',
+                '[VIEW_NAME]',
+                '[REGION_NAME]',
+                '[OPTIONS]'
+            ],
+            [
+                $this->getAppNamespace(),
+                $className,
+                $name,
+                $label,
+                $this->stringifyAsArray( $attributes ),
+                $viewShortClassName,
+                $regionShortClassName,
+                $this->stringifyAsArray( $options ),
+            ],
+            file_get_contents( $path )
+        );
+        $path = $this->createFoldersReturnPathForNamespace( $this->getAppNamespace() . "Laraview\\{$viewShortClassName}\Regions\\{$regionShortClassName}\Elements" );
+        file_put_contents( $path . $className . '.php', $contents );
+        return $path . $className . '.php';
     }
 
 }

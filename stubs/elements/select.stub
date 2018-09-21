@@ -1,0 +1,38 @@
+<?php
+
+namespace [NAMESPACE]Laraview\[VIEW_NAME]\Regions\[REGION_NAME]\Elements;
+
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Select;
+
+class [CLASS_NAME] extends Select implements ElementBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * @var string
+     */
+    protected $label = '[LABEL]';
+
+    /**
+     * Element attributes
+     * @var array
+     */
+    protected $attributes = [
+        [ATTRIBUTES]
+    ];
+
+    /**
+     * Select options
+     * @var array
+     */
+    protected $options = [
+        [OPTIONS]
+    ];
+
+
+}
