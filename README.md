@@ -41,7 +41,7 @@ coming soon...
 php artisan laraview:region
 ```
 
-![Preview1](./readme/laraview-view.png)
+![Preview1](./readme/laraview-view-command.png)
 
 coming soon...
 
