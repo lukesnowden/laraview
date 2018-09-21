@@ -25,7 +25,7 @@ abstract class Text extends BaseElement implements ElementBlueprint
      */
     protected function element()
     {
-        return sprintf( '<input name="%s" %s value="%s" />',
+        return sprintf( '<input type="text" name="%s" %s value="%s" />',
             $this->name,
             $this->attributes(),
             "{{ old('{$this->name}') }}"

@@ -1,0 +1,29 @@
+<?php
+
+namespace [NAMESPACE]Laraview\[VIEW_NAME]\Regions\[REGION_NAME]\Elements;
+
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Radio;
+
+class [CLASS_NAME] extends Radio implements ElementBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * @var string
+     */
+    protected $label = '[LABEL]';
+
+    /**
+     * @var array
+     */
+    protected $attributes = [
+        [ATTRIBUTES]
+    ];
+
+
+}
