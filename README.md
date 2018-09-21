@@ -27,50 +27,41 @@ And finally run the following command to generate your view files
 php artisan laraview:compile
 ```
 
-## View Generator
+## Walk-through
+
+Included is demo service provider which you can use to figure out how this package works but I'd also 
+like to provide a walk-through to demonstrate how this package can be used in a production application.
+
+Lets imagine we have an admin panel which has a users section where you can edit a users details. Lets 
+create that View: 
+
+### View Generator
 
 ```cli
 php artisan laraview:view
 ```
 
-![ViewCommand](./readme/laraview-view-command.png)
+![ViewCommand](./readme/laraview-view--customer.edit.png)
 
-coming soon...
-
-## Region Generator
-
-```cli
-php artisan laraview:region
-```
-
-![ViewCommand](./readme/laraview-region-command.png)
-
-coming soon...
-
-## Element Generator
-
-```cli
-php artisan laraview:element
-```
-
-coming soon...
-
-I would now suggest creating a new service provider to register your new view;
+The View stub has now been created and located in `app/Laraview/CustomerEdit/`. We can now register 
+this View, I suggest creating a new service provider to keep things clean:
 
 ```cli
 php artisan make:provider ViewServiceProvider
 ```
 
-Once created, register your new view in the `boot` method inside a `booted` closure like so;
+Add this new provider to the `config/app.php`.
+
+In the boot method of the View service provider register the new View using the `Register` object;
 
 ```php
 <?php
 
-namespace MyApp\Providers;
+namespace App\Providers;
 
+use App\Laraview\CustomerEdit\CustomerEditView;
 use Illuminate\Support\ServiceProvider;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
-use MyApp\Laraview\ProductEdit\ProductEditView;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -82,10 +73,147 @@ class ViewServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app->booted( function( $app ) {
-            $app[ RegisterBlueprint::class ]->attachView( new ProductEditView );
+            $app[ RegisterBlueprint::class ]->attachView( new CustomerEditView );
         });
     }
+
 }
+``` 
+
+Along with the stub 
+a `template.blade.php` has been created which is used to structure your `Regions`. Lets alter it 
+slightly to incorporate two regions, `Left Column` and `Right Column`. We can define these using 
+`placeholders`:
+
+```blade
+@extends( 'app' )
+
+@section( 'main' )
+    <div class="container">
+        <div class="left-column col-8">
+            [LEFT_COLUMN]
+        </div>
+        <div class="right-column col-4">
+            [RIGHT_COLUMN]
+        </div>
+    </div>
+@endsection
+``` 
+
+### Region Generator
+
+Now we have the view setup lets create two new `Regions`, LEFT_COLUMN and RIGHT_COLUMN;
+
+```cli
+php artisan laraview:region
+```
+
+![ViewCommand](./readme/laraview-region--customer.edit.png)
+
+Now you will two more files generated in `app/Laraview/CustomerEdit/Regions`. Lets register 
+these regions onto our View.
+
+```php
+<?php
+
+namespace App\Laraview\CustomerEdit;
+
+use App\Laraview\CustomerEdit\Regions\LeftColumnRegion;
+use App\Laraview\CustomerEdit\Regions\RightColumnRegion;
+use Laraview\Libs\Blueprints\ViewBlueprint;
+use Laraview\Libs\BaseView;
+
+class CustomerEditView extends BaseView implements ViewBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $path = 'customers.edit';
+
+    /**
+     * @var string
+     */
+    protected $baseViewPath = 'template.blade.php';
+
+    /**
+     * Regions to attach to this view
+     * @var array
+     */
+    protected $regions = [
+        LeftColumnRegion::class,
+        RightColumnRegion::class
+    ];
+
+}
+```
+
+### Element Generator
+
+```cli
+php artisan laraview:element
+```
+
+Lets now add a couple of input elements to the left column, forename and surname.
+
+![ViewCommand](./readme/laraview-element--customer.edit.png)
+
+Lets now register these elements to the Region.
+
+```php
+<?php
+
+namespace App\Laraview\CustomerEdit\Regions;
+
+use App\Laraview\CustomerEdit\Regions\LeftColum\Elements\ForenameTextElement;
+use App\Laraview\CustomerEdit\Regions\LeftColum\Elements\SurnameTextElement;
+use Laraview\Libs\Blueprints\RegionBlueprint;
+use Laraview\Libs\BaseRegion;
+
+class LeftColumnRegion extends BaseRegion implements RegionBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $placeholder = '[LEFT_COLUMN]';
+
+    /**
+     * @var array
+     */
+    protected $elements = [
+        ForenameTextElement::class,
+        SurnameTextElement::class
+    ];
+
+}
+```
+
+Now all we need to do is compile everything down into the blade file.
+
+![ViewCommand](./readme/laraview-compile--customer.edit.png)
+
+If you now open up the generated file you should see this;
+
+```blade
+
+@extends( 'app' ) 
+@section( 'main' )
+<div class="container">
+	<div class="left-column col-8">
+		<div>
+			<label for="forename-input">Forename</label>
+			<input name="forename" id="forename-input" placeholder="John..." class="form-control" value="{{ old('forename') }}" />
+		</div>
+		<div>
+			<label for="surname">Surname</label>
+			<input name="surname" id="surname" class="form-control" value="{{ old('surname') }}" />
+		</div>
+	</div>
+	<div class="right-column col-4">
+	</div>
+</div>
+@endsection
 ```
 
 ## Hooking into foreign regions 
@@ -100,36 +228,6 @@ is to be added and to which Google Shopping category.
 We can do this by listening to when the region is attached and then insert our 
 elements using the regions `insertElement` method. Very soon, there will also 
 be an `insertElementBefore` and `insertElementAfter` methods available.
-
-```php
-<?php
-
-namespace MyApp\Providers;
-
-use Illuminate\Support\ServiceProvider;
-use Laraview\Libs\Blueprints\RegisterBlueprint;
-use MyApp\Laraview\ProductEdit\ProductEditView;
-
-class ViewServiceProvider extends ServiceProvider
-{
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->app->booted( function( $app ) {
-            $app[ RegisterBlueprint::class ]->attachView( new ProductEditView );
-        });
-        app( 'events' )->listen( LeftHandColumn::class . '.attached', function( $region ) {
-            $region->insertElement( GoogleCheckoutCheckboxElement::class );
-            $region->insertElement( GoogleCheckoutSelectElement::class );
-        });
-    }
-}
-```
-
 
 ## MIT License
 
