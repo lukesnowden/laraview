@@ -33,6 +33,8 @@ php artisan laraview:compile
 php artisan laraview:view
 ```
 
+![ViewCommand](./readme/laraview-view-command.png)
+
 coming soon...
 
 ## Region Generator
@@ -41,7 +43,7 @@ coming soon...
 php artisan laraview:region
 ```
 
-![Preview1](./readme/laraview-view-command.png)
+![ViewCommand](./readme/laraview-region-command.png)
 
 coming soon...
 
