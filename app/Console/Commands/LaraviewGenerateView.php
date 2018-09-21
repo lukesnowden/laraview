@@ -59,14 +59,14 @@ class LaraviewGenerateView extends Command
             '[VIEW_CLASS_NAME]',
             '[PATH]',
             '[BASE_VIEW_PATH]',
-            '[FOLDER_NAME]'
+            '[FOLDER_NAME]',
         ], [
             $this->getAppNamespace(),
             $folderName . 'View',
             $path,
             'template.blade.php',
             $folderName
-        ], file_get_contents( base_path( 'stubs/view.stub' ) ) );
+        ], file_get_contents( __DIR__ . '/../../../stubs/view.stub' ) );
         $this->createRelatedFoldersFor( $folderName );
         $this->createTemplate( $folderName );
         $filePath = app_path( "Laraview/{$folderName}/{$folderName}View.php" );
@@ -107,7 +107,7 @@ class LaraviewGenerateView extends Command
     {
         file_put_contents(
             app_path( "Laraview/{$folderName}/template.blade.php" ),
-            file_get_contents( base_path( 'stubs/template.stub' ) )
+            file_get_contents( __DIR__ . '/../../../stubs/template.stub' )
         );
     }
 }

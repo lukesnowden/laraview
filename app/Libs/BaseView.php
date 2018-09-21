@@ -62,6 +62,14 @@ abstract class BaseView implements ViewBlueprint
     }
 
     /**
+     * @return array
+     */
+    public function regions()
+    {
+        return $this->regions;
+    }
+
+    /**
      * @throws Exception
      * @return void
      */

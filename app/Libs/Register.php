@@ -104,4 +104,31 @@ class Register implements RegisterBlueprint
 
     }
 
+    /**
+     * @return array
+     */
+    public function regions()
+    {
+        $regions = [];
+        foreach( $this->views as $view ) {
+            $regions = $regions + array_keys( $view->regions() );
+        }
+        return $regions;
+    }
+
+    /**
+     * @param $region
+     * @return mixed
+     */
+    public function getViewForRegion( $region )
+    {
+        foreach( $this->views as $view ) {
+            foreach( $view->regions() as $regionName => $regionObject ) {
+                if( $regionName === $region ) {
+                    return $view;
+                }
+            }
+        }
+    }
+
 }

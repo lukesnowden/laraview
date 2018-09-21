@@ -87,7 +87,7 @@ class LaraviewGenerateRegion extends Command
      */
     private function getContent( $className, $viewClass, $placeholder )
     {
-        $file = file_get_contents( base_path( 'stubs/region.stub' ) );
+        $file = file_get_contents( __DIR__ . '/../../../stubs/region.stub' );
         return str_replace( [
             '[NAMESPACE]',
             '[VIEW_NAME]',
