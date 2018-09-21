@@ -41,6 +41,8 @@ coming soon...
 php artisan laraview:region
 ```
 
+![Preview1](./readme/laraview-view.png)
+
 coming soon...
 
 ## Element Generator
