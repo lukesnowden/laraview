@@ -172,8 +172,8 @@ class LaraviewGenerateElement extends Command
     private function generateFile( string $path, string $region, string $name, $label, array $attributes, string $type )
     {
         $view = $this->getView( $region );
-        $viewShortClassName = ( new ReflectionClass( $view ) )->getShortName();
-        $regionShortClassName = ( new ReflectionClass( $region ) )->getShortName();
+        $viewShortClassName = rtrim( ( new ReflectionClass( $view ) )->getShortName(), 'View' );
+        $regionShortClassName = rtrim( ( new ReflectionClass( $region ) )->getShortName(), 'Region' );
 
         $classifiedName = ucfirst( camel_case( $name ) );
         $className = $classifiedName . ucfirst( $type ) . 'Element';
