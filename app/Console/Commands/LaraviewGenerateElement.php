@@ -276,9 +276,8 @@ class LaraviewGenerateElement extends Command
     private function generateFile( string $path, string $region, string $name, $label, array $attributes, string $type )
     {
         $view = $this->getView( $region );
-        $viewShortClassName = rtrim( ( new ReflectionClass( $view ) )->getShortName(), 'View' );
-        $regionShortClassName = rtrim( ( new ReflectionClass( $region ) )->getShortName(), 'Region' );
-
+        $viewShortClassName = preg_replace( '/View$/', '', ( new ReflectionClass( $view ) )->getShortName() );
+        $regionShortClassName = preg_replace( '/Region$/', '', ( new ReflectionClass( $region ) )->getShortName() );
         $classifiedName = ucfirst( camel_case( $name ) );
         $className = $classifiedName . ucfirst( $type ) . 'Element';
 
@@ -322,8 +321,8 @@ class LaraviewGenerateElement extends Command
     {
         $type = 'select';
         $view = $this->getView( $region );
-        $viewShortClassName = rtrim( ( new ReflectionClass( $view ) )->getShortName(), 'View' );
-        $regionShortClassName = rtrim( ( new ReflectionClass( $region ) )->getShortName(), 'Region' );
+        $viewShortClassName = preg_replace( '/View$/', '', ( new ReflectionClass( $view ) )->getShortName() );
+        $regionShortClassName = preg_replace( '/Region$/', '', ( new ReflectionClass( $region ) )->getShortName() );
 
         $classifiedName = ucfirst( camel_case( $name ) );
         $className = $classifiedName . ucfirst( $type ) . 'Element';

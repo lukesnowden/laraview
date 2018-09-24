@@ -4,6 +4,7 @@ namespace Laraview\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\DetectsApplicationNamespace;
+use Laraview\Libs\Blueprints\RegisterBlueprint;
 use ReflectionClass;
 
 class LaraviewGenerateRegion extends Command
@@ -41,7 +42,7 @@ class LaraviewGenerateRegion extends Command
     public function handle()
     {
         $name = $this->ask( 'What is the name of your region (singular)?' );
-        $viewClass = $this->ask( 'What is the full path class name of the View this region is for?' );
+        $viewClass = $this->getView();
         $placeholder = $this->ask( 'What placeholder would you like to use for this region?' );
 
         if( ! class_exists( '\\' . $viewClass ) ) {
@@ -109,6 +110,29 @@ class LaraviewGenerateRegion extends Command
     private function getViewFolderName( $viewClass )
     {
         return array_reverse( explode( '\\', ( new ReflectionClass( $viewClass ) )->getNamespaceName() ) )[ 0 ];
+    }
+
+    /**
+     * @param bool $askChoice
+     * @return mixed|string
+     */
+    private function getView( $askChoice = true )
+    {
+
+        if( $askChoice ) {
+            $choices = [ '-' => 'Enter Manually' ] + app( RegisterBlueprint::class )->views();
+            $view = $this->choice( "What view is this region for?", $choices );
+            if( $view !== '-' ) {
+                return $choices[ $view ];
+            }
+        }
+
+        $view = $this->ask( "What view is this region for (fully qualified class name)?" );
+        if( ! class_exists( "\\" . $view ) ) {
+            $this->error( "View {$view} does not exist" );
+            return $this->getView( false );
+        }
+        return $view;
     }
 
 }

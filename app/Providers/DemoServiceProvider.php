@@ -3,10 +3,10 @@
 namespace Laraview\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Laraview\Laraview\CustomerEdit\CustomerEditView;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Demo\Event\SurnameTextElement;
 use Laraview\Libs\Demo\GeneralTabRegion;
-use Laraview\Libs\Demo\PagesEditView;
 
 class DemoServiceProvider extends ServiceProvider
 {
@@ -18,12 +18,12 @@ class DemoServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app->booted( function( $app ) {
-            $app[ RegisterBlueprint::class ]->attachView( new PagesEditView );
+            $app[ RegisterBlueprint::class ]->attachView( new CustomerEditView );
         });
 
-        app( 'events' )->listen( GeneralTabRegion::class . '.attached', function( $region ) {
-            $region->insertElement( SurnameTextElement::class );
-        });
+        //app( 'events' )->listen( GeneralTabRegion::class . '.attached', function( $region ) {
+        //    $region->insertElement( SurnameTextElement::class );
+        //});
     }
 
     /**

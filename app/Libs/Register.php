@@ -117,6 +117,18 @@ class Register implements RegisterBlueprint
     }
 
     /**
+     * @return array
+     */
+    public function views()
+    {
+        $views = [];
+        foreach( $this->views as $view ) {
+            $views[] = get_class( $view );
+        }
+        return $views;
+    }
+
+    /**
      * @param $region
      * @return mixed
      */
