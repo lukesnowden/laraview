@@ -25,10 +25,11 @@ abstract class Radio extends BaseElement implements ElementBlueprint
      */
     protected function element()
     {
-        return sprintf( '<input type="radio" name="%s" %s value="%s" />',
+        return sprintf( '<input type="radio" name="%s" %s value="%s" %s />',
             $this->name,
             $this->attributes(),
-            "{{ old('{$this->name}') }}"
+            "{{ \${$this->valueKeyName()} }}",
+            "{{ \${$this->statusKeyName()} }}"
         );
     }
 
@@ -40,5 +41,18 @@ abstract class Radio extends BaseElement implements ElementBlueprint
         parent::preRender();
         $this->attributes[ 'class' ] = trim( ( isset( $this->attributes[ 'class' ] ) ? $this->attributes[ 'class' ] : '' ) . ' form-control' );
     }
+
+    /**
+     * @return string
+     */
+    public function statusKeyName()
+    {
+        return camel_case( $this->name ) . 'Status';
+    }
+
+    /**
+     * @return bool
+     */
+    abstract public function status();
 
 }

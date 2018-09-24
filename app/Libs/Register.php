@@ -143,6 +143,9 @@ class Register implements RegisterBlueprint
                 $data = [];
                 foreach( $viewObject->elements() as $element ) {
                     $data[ $element->valueKeyName() ] = old( $element->name() ) ? old( $element->name() ) : $element->value();
+                    if( method_exists( $element, 'statusKeyName' ) ) {
+                        $data[ $element->statusKeyName() ] = old( $element->name() ) ? 'checked' : ( $element->status() ? 'checked' : '' );
+                    }
                 }
                 $view->with( $data );
             }
