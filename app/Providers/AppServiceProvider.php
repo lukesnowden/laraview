@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app->singleton( RegisterBlueprint::class, Register::class );
+        $this->app[ RegisterBlueprint::class ]->viewComposer();
     }
 
     /**

@@ -25,5 +25,15 @@ class [CLASS_NAME] extends Checkbox implements ElementBlueprint
         [ATTRIBUTES]
     ];
 
+    /**
+     * @return mixed
+     */
+    public function value()
+    {
+        /**
+         * $this->region->getView()->data() // Use this data to inject...
+         */
+        parent::value();
+    }
 
 }

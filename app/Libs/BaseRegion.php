@@ -5,6 +5,7 @@ namespace Laraview\Libs;
 use Exception;
 use Laraview\Libs\Blueprints\ElementBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
+use Laraview\Libs\Blueprints\ViewBlueprint;
 
 abstract class BaseRegion implements RegionBlueprint
 {
@@ -18,6 +19,11 @@ abstract class BaseRegion implements RegionBlueprint
      * @var string
      */
     protected $placeholder = '';
+
+    /**
+     * @var null
+     */
+    protected $view = null;
 
     /**
      * Region constructor.
@@ -80,6 +86,22 @@ abstract class BaseRegion implements RegionBlueprint
     }
 
     /**
+     * @param ViewBlueprint $view
+     */
+    public function view( ViewBlueprint $view )
+    {
+        $this->view = $view;
+    }
+
+    /**
+     * @return null
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    /**
      * @throws Exception
      * @return void
      */
@@ -91,8 +113,17 @@ abstract class BaseRegion implements RegionBlueprint
             if( ! $elements[ $element ] instanceof ElementBlueprint ) {
                 throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
             }
+            $elements[ $element ]->region( $this );
         }
         $this->elements = $elements;
+    }
+
+    /**
+     * @return array
+     */
+    public function elements()
+    {
+        return $this->elements;
     }
 
 }

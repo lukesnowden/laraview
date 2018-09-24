@@ -31,6 +31,11 @@ abstract class BaseView implements ViewBlueprint
     protected $baseViewPath = '';
 
     /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * ViewBase constructor.
      * @throws Exception
      */
@@ -81,9 +86,40 @@ abstract class BaseView implements ViewBlueprint
             if( ! $regions[ $region ] instanceof RegionBlueprint ) {
                 throw new Exception( "Region {$region} must implement " . RegionBlueprint::class );
             }
+            $regions[ $region ]->view( $this );
             event( $region  . '.attached', [ $regions[ $region ] ] );
         }
         $this->regions = $regions;
+    }
+
+    /**
+     * @return array
+     */
+    public function elements()
+    {
+        $elements = [];
+        foreach( $this->regions as $region ) {
+            foreach( $region->elements() as $element ) {
+                $elements[] = $element;
+            }
+        }
+        return $elements;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setViewData( array $data )
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function data()
+    {
+        return $this->data;
     }
 
     /**

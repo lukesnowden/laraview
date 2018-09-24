@@ -131,4 +131,35 @@ class Register implements RegisterBlueprint
         }
     }
 
+    /**
+     * @return void
+     */
+    public function viewComposer()
+    {
+        view()->composer( '*', function( $view ) {
+            $dotNotationPath = ltrim( str_replace( '/', '.', preg_replace( '/\.(?:blade\.)php$/', '', str_replace( resource_path( 'views' ), '', $view->getPath() ) ) ), '.' );
+            if( $viewObject = app( RegisterBlueprint::class )->getViewByPath( $dotNotationPath ) ) {
+                $viewObject->setViewData( $view->getData() );
+                $data = [];
+                foreach( $viewObject->elements() as $element ) {
+                    $data[ $element->valueKeyName() ] = old( $element->name() ) ? old( $element->name() ) : $element->value();
+                }
+                $view->with( $data );
+            }
+        });
+    }
+
+    /**
+     * @param $path
+     * @return mixed
+     */
+    public function getViewByPath( $path )
+    {
+        foreach( $this->views as $view ) {
+            if( $path === $view->path() ) {
+                return $view;
+            }
+        }
+    }
+
 }

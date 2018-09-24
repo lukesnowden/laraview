@@ -25,5 +25,16 @@ class [CLASS_NAME] extends Text implements ElementBlueprint
         [ATTRIBUTES]
     ];
 
+    /**
+     * @return mixed
+     */
+    public function value()
+    {
+        /**
+         * $this->region->getView()->data() // Use this data to inject...
+         */
+        parent::value();
+    }
+
 
 }

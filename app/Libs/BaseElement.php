@@ -3,6 +3,7 @@
 namespace Laraview\Libs;
 
 use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Blueprints\RegionBlueprint;
 
 abstract class BaseElement implements ElementBlueprint
 {
@@ -18,9 +19,19 @@ abstract class BaseElement implements ElementBlueprint
     protected $label = '';
 
     /**
+     * @var null
+     */
+    protected $region = null;
+
+    /**
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * @var null
+     */
+    protected $value = null;
 
     /**
      * @param $content
@@ -61,6 +72,49 @@ abstract class BaseElement implements ElementBlueprint
         if( ! isset( $this->attributes[ 'id' ] ) ) {
             $this->attributes[ 'id' ] = $this->name;
         }
+    }
+
+    /**
+     * @param RegionBlueprint $region
+     */
+    public function region( RegionBlueprint $region )
+    {
+        $this->region = $region;
+    }
+
+    /**
+     * @return string
+     */
+    public function valueKeyName()
+    {
+        return camel_case( $this->name ) . 'Value';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function value()
+    {
+        /**
+         * $this->region->getView()->data() // Use this data to inject...
+         */
+        return $this->value;
+    }
+
+    /**
+     * @param $value
+     */
+    public function setValue( $value )
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function name()
+    {
+        return $this->name;
     }
 
     /**

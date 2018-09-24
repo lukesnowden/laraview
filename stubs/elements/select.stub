@@ -34,5 +34,15 @@ class [CLASS_NAME] extends Select implements ElementBlueprint
         [OPTIONS]
     ];
 
+    /**
+     * @return mixed
+     */
+    public function value()
+    {
+        /**
+         * $this->region->getView()->data() // Use this data to inject...
+         */
+        parent::value();
+    }
 
 }

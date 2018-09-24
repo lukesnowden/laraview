@@ -14,6 +14,16 @@ abstract class Select extends BaseElement implements ElementBlueprint
     protected $options = [];
 
     /**
+     * @var null
+     */
+    protected $value = null;
+
+    /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * @return mixed
      */
     public function render()
@@ -44,7 +54,7 @@ abstract class Select extends BaseElement implements ElementBlueprint
     {
         $html = '';
         foreach( $this->options as $value => $text ) {
-            $selected = "{{ old('{$this->name}') && old('{$this->name}') === '{$value}' ? 'selected' : '' }}";
+            $selected = "{{ \${$this->valueKeyName()} === '{$value}' ? 'selected' : '' }}";
             $html .= sprintf( '<option %s value="%s">%s</option>', $selected, $value, $text ) . "\n";
         }
         return $html;
