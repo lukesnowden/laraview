@@ -50,19 +50,41 @@ abstract class BaseRegion implements RegionBlueprint
     /**
      * @param $element
      * @param $targetElement
+     * @throws Exception
      */
     public function insertElementBefore( $element, $targetElement )
     {
-
+        $new = [];
+        foreach( $this->elements as $potentialTarget => $val ) {
+            if( $potentialTarget === $targetElement ) {
+                $new[ $element ] = new $element;
+                if( ! $new[ $element ] instanceof ElementBlueprint ) {
+                    throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
+                }
+            }
+            $new[ $potentialTarget ] = $val;
+        }
+        $this->elements = $new;
     }
 
     /**
      * @param $element
      * @param $targetElement
+     * @throws Exception
      */
     public function insertElementAfter( $element, $targetElement )
     {
-
+        $new = [];
+        foreach( $this->elements as $potentialTarget => $val ) {
+            $new[ $potentialTarget ] = $val;
+            if( $potentialTarget === $targetElement ) {
+                $new[ $element ] = new $element;
+                if( ! $new[ $element ] instanceof ElementBlueprint ) {
+                    throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
+                }
+            }
+        }
+        $this->elements = $new;
     }
 
     /**

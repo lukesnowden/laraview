@@ -43,7 +43,7 @@ class LaraviewGenerateRegion extends Command
     {
         $name = $this->ask( 'What is the name of your region (singular)?' );
         $viewClass = $this->getView();
-        $placeholder = $this->ask( 'What placeholder would you like to use for this region?' );
+        $placeholder = $this->getPlaceholder( $name );
 
         if( ! class_exists( '\\' . $viewClass ) ) {
             $this->error( "{$viewClass} does not exist" );
@@ -51,12 +51,14 @@ class LaraviewGenerateRegion extends Command
         }
 
         $this->generate( $name, $viewClass, $placeholder );
+        $this->info( "Use placeholder '{$placeholder}' in your template file!" );
 
     }
 
     /**
      * @param $name
      * @param $viewClass
+     * @param $placeholder
      * @throws \ReflectionException
      */
     private function generate( $name, $viewClass, $placeholder )
@@ -83,6 +85,7 @@ class LaraviewGenerateRegion extends Command
     /**
      * @param $className
      * @param $viewClass
+     * @param $placeholder
      * @return mixed
      * @throws \ReflectionException
      */
@@ -133,6 +136,16 @@ class LaraviewGenerateRegion extends Command
             return $this->getView( false );
         }
         return $view;
+    }
+
+    /**
+     * @param $name
+     * @return string
+     */
+    private function getPlaceholder( $name )
+    {
+        //return $this->ask( 'What placeholder would you like to use for this region?' );
+        return '[' . strtoupper( str_slug( $name, '_' ) ) . ']';
     }
 
 }

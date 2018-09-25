@@ -4,6 +4,7 @@ namespace Laraview\Libs;
 
 use Laraview\Libs\Blueprints\ElementBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
+use ReflectionClass;
 
 abstract class BaseElement implements ElementBlueprint
 {
@@ -116,6 +117,11 @@ abstract class BaseElement implements ElementBlueprint
     {
         return $this->name;
     }
+
+    /**
+     * @return null|string
+     */
+    abstract public static function humanReadableName();
 
     /**
      * @return string

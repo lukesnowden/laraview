@@ -55,4 +55,12 @@ abstract class Radio extends BaseElement implements ElementBlueprint
      */
     abstract public function status();
 
+    /**
+     * @return mixed|null|string
+     */
+    public static function humanReadableName()
+    {
+        return 'Radio Element';
+    }
+
 }

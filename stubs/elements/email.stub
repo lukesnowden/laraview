@@ -1,0 +1,40 @@
+<?php
+
+namespace [NAMESPACE]Laraview\[VIEW_NAME]\Regions\[REGION_NAME]\Elements;
+
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Email;
+
+class [CLASS_NAME] extends Email implements ElementBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * @var string
+     */
+    protected $label = '[LABEL]';
+
+    /**
+     * @var array
+     */
+    protected $attributes = [
+        [ATTRIBUTES]
+    ];
+
+    /**
+     * @return mixed
+     */
+    public function value()
+    {
+        /**
+         * $this->region->getView()->data() // Use this data to inject...
+         */
+        parent::value();
+    }
+
+
+}

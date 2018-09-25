@@ -4,6 +4,13 @@ namespace Laraview\Libs;
 
 use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
+use Laraview\Libs\Elements\Checkbox;
+use Laraview\Libs\Elements\Email;
+use Laraview\Libs\Elements\Password;
+use Laraview\Libs\Elements\Radio;
+use Laraview\Libs\Elements\Select;
+use Laraview\Libs\Elements\Text;
+use Laraview\Libs\Elements\Textarea;
 
 class Register implements RegisterBlueprint
 {
@@ -17,6 +24,27 @@ class Register implements RegisterBlueprint
      * @var null
      */
     protected $console = null;
+
+    /**
+     * @var array
+     */
+    protected $registeredElements = [
+        Text::class,
+        Select::class,
+        Email::class,
+        Password::class,
+        Radio::class,
+        Checkbox::class,
+        Textarea::class
+    ];
+
+    /**
+     * @return array
+     */
+    public function registeredElements()
+    {
+        return $this->registeredElements;
+    }
 
     /**
      * @param $object

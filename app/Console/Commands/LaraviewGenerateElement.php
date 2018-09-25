@@ -5,6 +5,13 @@ namespace Laraview\Console\Commands;
 use Illuminate\Console\Command;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Illuminate\Console\DetectsApplicationNamespace;
+use Laraview\Libs\Elements\Checkbox;
+use Laraview\Libs\Elements\Email;
+use Laraview\Libs\Elements\Password;
+use Laraview\Libs\Elements\Radio;
+use Laraview\Libs\Elements\Select;
+use Laraview\Libs\Elements\Text;
+use Laraview\Libs\Elements\Textarea;
 use ReflectionClass;
 
 class LaraviewGenerateElement extends Command
@@ -26,13 +33,6 @@ class LaraviewGenerateElement extends Command
      */
     protected $description = 'Generates files for a Laraview element';
 
-    protected $elements = [
-        'Text',
-        'Select',
-        'Checkbox',
-        'Radio'
-    ];
-
     /**
      * Create a new command instance.
      *
@@ -49,24 +49,87 @@ class LaraviewGenerateElement extends Command
     public function handle()
     {
         $region = $this->getRegion();
-        $elementType = $this->choice( "What kind of element would you like to create?", $this->elements );
+        $elementType = $this->choice( "What kind of element would you like to create?", $this->getElements() );
 
         switch( $elementType ) {
-            case  'Text' :
+            case  Text::class :
                 $file = $this->textElement( $region );
             break;
-            case 'Select' :
+            case Select::class :
                 $file = $this->selectElement( $region );
             break;
-            case 'Checkbox' :
+            case Checkbox::class :
                 $file = $this->checkboxElement( $region );
             break;
-            case 'Radio' :
+            case Radio::class :
                 $file = $this->radioElement( $region );
+            break;
+            case Password::class :
+                $file = $this->passwordElement( $region );
+            break;
+            case Email::class :
+                $file = $this->emailElement( $region );
+            break;
+            case Textarea::class :
+                $file = $this->textareaElement( $region );
+            break;
+            default :
+                $elementType::generate( $region, $elementType );
             break;
         }
 
         $this->info( "{$file} element created!" );
+    }
+
+    /**
+     * @param $region
+     * @return string
+     * @throws \ReflectionException
+     */
+    private function textareaElement( $region )
+    {
+        return $this->generateFile(
+            __DIR__ . '/../../../stubs/elements/textarea.stub',
+            $region,
+            $this->getNameOfElement(),
+            $this->getElementsLabel(),
+            $this->getAttributes(),
+            'textarea'
+        );
+    }
+
+    /**
+     * @param $region
+     * @return string
+     * @throws \ReflectionException
+     */
+    private function emailElement( $region )
+    {
+        return $this->generateFile(
+            __DIR__ . '/../../../stubs/elements/email.stub',
+            $region,
+            $this->getNameOfElement(),
+            $this->getElementsLabel(),
+            $this->getAttributes(),
+            'email'
+        );
+    }
+
+    /**
+     * @param $region
+     * @return string
+     * @throws \ReflectionException
+     */
+    private function passwordElement( $region )
+    {
+        return $this->generateFile(
+            __DIR__ . '/../../../stubs/elements/password.stub',
+            $region,
+            $this->getNameOfElement(),
+            $this->getElementsLabel(),
+            $this->getAttributes(),
+            'password'
+        );
     }
 
     /**
@@ -353,6 +416,18 @@ class LaraviewGenerateElement extends Command
         $path = $this->createFoldersReturnPathForNamespace( $this->getAppNamespace() . "Laraview\\{$viewShortClassName}\Regions\\{$regionShortClassName}\Elements" );
         file_put_contents( $path . $className . '.php', $contents );
         return $path . $className . '.php';
+    }
+
+    /**
+     * @return array
+     */
+    private function getElements()
+    {
+        $elements = [];
+        foreach( app( RegisterBlueprint::class )->registeredElements() as $element ) {
+            $elements[ $element ] = $element::humanReadableName();
+        }
+        return $elements;
     }
 
 }

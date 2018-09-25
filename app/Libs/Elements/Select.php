@@ -69,4 +69,12 @@ abstract class Select extends BaseElement implements ElementBlueprint
         $this->attributes[ 'class' ] = trim( ( isset( $this->attributes[ 'class' ] ) ? $this->attributes[ 'class' ] : '' ) . ' form-control' );
     }
 
+    /**
+     * @return mixed|null|string
+     */
+    public static function humanReadableName()
+    {
+        return 'Select Element';
+    }
+
 }
