@@ -3,21 +3,12 @@
 namespace Laraview\Libs\Elements;
 
 use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Traits\Formats\PasswordBootstrap;
 
 abstract class Password extends Text implements ElementBlueprint
 {
 
-    /**
-     * @return string
-     */
-    protected function element()
-    {
-        return sprintf( '<input type="password" name="%s" %s value="%s" />',
-            $this->name,
-            $this->attributes(),
-            "{{ \${$this->valueKeyName()} }}"
-        );
-    }
+    use PasswordBootstrap;
 
     /**
      * @return mixed|null|string

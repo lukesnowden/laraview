@@ -3,6 +3,8 @@
 namespace Laraview\Libs;
 
 use Exception;
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Blueprints\LayoutBlueprint;
 use ReflectionClass;
 use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
@@ -100,7 +102,15 @@ abstract class BaseView implements ViewBlueprint
         $elements = [];
         foreach( $this->regions as $region ) {
             foreach( $region->elements() as $element ) {
-                $elements[] = $element;
+                if( $element instanceof ElementBlueprint ) {
+                    $elements[] = $element;
+                } else if( $element instanceof LayoutBlueprint ) {
+                    foreach( $element->elements() as $layoutElement ) {
+                        if( $layoutElement instanceof ElementBlueprint ) {
+                            $elements[] = $layoutElement;
+                        }
+                    }
+                }
             }
         }
         return $elements;

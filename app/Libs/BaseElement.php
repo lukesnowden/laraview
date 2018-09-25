@@ -4,10 +4,12 @@ namespace Laraview\Libs;
 
 use Laraview\Libs\Blueprints\ElementBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
-use ReflectionClass;
+use Laraview\Libs\Elements\Traits\Formats\Bootstrap;
 
 abstract class BaseElement implements ElementBlueprint
 {
+
+    use Bootstrap;
 
     /**
      * @var string
@@ -33,25 +35,6 @@ abstract class BaseElement implements ElementBlueprint
      * @var null
      */
     protected $value = null;
-
-    /**
-     * @param $content
-     * @param $for
-     * @return string
-     */
-    protected function label( $content, $for = '' )
-    {
-        return sprintf( '<label for="%s">%s</label>', $for, $content );
-    }
-
-    /**
-     * @param $content
-     * @return string
-     */
-    protected function wrapper( $content )
-    {
-        return sprintf( '<div class="form-group">%s</div>', $content );
-    }
 
     /**
      * @return string
@@ -93,12 +76,10 @@ abstract class BaseElement implements ElementBlueprint
 
     /**
      * @return mixed
+     * @example $this->region->getView()->data() // Use this data to inject...
      */
     public function value()
     {
-        /**
-         * $this->region->getView()->data() // Use this data to inject...
-         */
         return $this->value;
     }
 
@@ -132,5 +113,10 @@ abstract class BaseElement implements ElementBlueprint
      * @return mixed
      */
     abstract public function render();
+
+    /**
+     * @param RegionBlueprint $region
+     */
+    public function created( RegionBlueprint $region ) {}
 
 }

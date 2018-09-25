@@ -4,11 +4,15 @@ namespace Laraview\Libs;
 
 use Exception;
 use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Blueprints\LayoutBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
 use Laraview\Libs\Blueprints\ViewBlueprint;
+use Laraview\Libs\Traits\ElementInsertion;
 
 abstract class BaseRegion implements RegionBlueprint
 {
+
+    use ElementInsertion;
 
     /**
      * @var array
@@ -31,60 +35,6 @@ abstract class BaseRegion implements RegionBlueprint
     public function __construct()
     {
         $this->setupElements();
-    }
-
-    /**
-     * @param $element
-     * @return $this
-     * @throws Exception
-     */
-    public function insertElement( $element )
-    {
-        $this->elements[ $element ] = new $element;
-        if( ! $this->elements[ $element ] instanceof ElementBlueprint ) {
-            throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
-        }
-        return $this;
-    }
-
-    /**
-     * @param $element
-     * @param $targetElement
-     * @throws Exception
-     */
-    public function insertElementBefore( $element, $targetElement )
-    {
-        $new = [];
-        foreach( $this->elements as $potentialTarget => $val ) {
-            if( $potentialTarget === $targetElement ) {
-                $new[ $element ] = new $element;
-                if( ! $new[ $element ] instanceof ElementBlueprint ) {
-                    throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
-                }
-            }
-            $new[ $potentialTarget ] = $val;
-        }
-        $this->elements = $new;
-    }
-
-    /**
-     * @param $element
-     * @param $targetElement
-     * @throws Exception
-     */
-    public function insertElementAfter( $element, $targetElement )
-    {
-        $new = [];
-        foreach( $this->elements as $potentialTarget => $val ) {
-            $new[ $potentialTarget ] = $val;
-            if( $potentialTarget === $targetElement ) {
-                $new[ $element ] = new $element;
-                if( ! $new[ $element ] instanceof ElementBlueprint ) {
-                    throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
-                }
-            }
-        }
-        $this->elements = $new;
     }
 
     /**
@@ -132,10 +82,11 @@ abstract class BaseRegion implements RegionBlueprint
         $elements = [];
         foreach( $this->elements as $key => $element ) {
             $elements[ $element ] = new $element;
-            if( ! $elements[ $element ] instanceof ElementBlueprint ) {
-                throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
+            if( ! $elements[ $element ] instanceof ElementBlueprint && ! $elements[ $element ] instanceof LayoutBlueprint ) {
+                throw new Exception( "{$element} must implement " . ElementBlueprint::class . ' or ' . LayoutBlueprint::class );
             }
             $elements[ $element ]->region( $this );
+            $elements[ $element ]->created( $this );
         }
         $this->elements = $elements;
     }

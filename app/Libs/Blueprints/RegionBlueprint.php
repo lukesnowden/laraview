@@ -7,6 +7,12 @@ interface RegionBlueprint
 
     /**
      * @param $element
+     * @return mixed
+     */
+    public function getElement( $element );
+
+    /**
+     * @param $element
      * @return $this
      * @throws \Exception
      */

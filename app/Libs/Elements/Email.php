@@ -3,21 +3,12 @@
 namespace Laraview\Libs\Elements;
 
 use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Traits\Formats\EmailBootstrap;
 
 abstract class Email extends Text implements ElementBlueprint
 {
 
-    /**
-     * @return string
-     */
-    protected function element()
-    {
-        return sprintf( '<input type="email" name="%s" %s value="%s" />',
-            $this->name,
-            $this->attributes(),
-            "{{ \${$this->valueKeyName()} }}"
-        );
-    }
+    use EmailBootstrap;
 
     /**
      * @return mixed|null|string

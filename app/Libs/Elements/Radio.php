@@ -4,9 +4,12 @@ namespace Laraview\Libs\Elements;
 
 use Laraview\Libs\BaseElement;
 use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Traits\Formats\RadioBootstrap;
 
 abstract class Radio extends BaseElement implements ElementBlueprint
 {
+
+    use RadioBootstrap;
 
     /**
      * @return mixed
@@ -18,28 +21,6 @@ abstract class Radio extends BaseElement implements ElementBlueprint
             $this->label( $this->label, $this->attributes[ 'id' ] ) .
             $this->element()
         );
-    }
-
-    /**
-     * @return string
-     */
-    protected function element()
-    {
-        return sprintf( '<input type="radio" name="%s" %s value="%s" %s />',
-            $this->name,
-            $this->attributes(),
-            "{{ \${$this->valueKeyName()} }}",
-            "{{ \${$this->statusKeyName()} }}"
-        );
-    }
-
-    /**
-     * @return void
-     */
-    protected function preRender()
-    {
-        parent::preRender();
-        $this->attributes[ 'class' ] = trim( ( isset( $this->attributes[ 'class' ] ) ? $this->attributes[ 'class' ] : '' ) . ' form-control' );
     }
 
     /**
