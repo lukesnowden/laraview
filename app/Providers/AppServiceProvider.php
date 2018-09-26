@@ -5,6 +5,7 @@ namespace Laraview\Providers;
 use Illuminate\Support\ServiceProvider;
 use Laraview\Console\Commands\LaraviewCompiler;
 use Laraview\Console\Commands\LaraviewGenerateElement;
+use Laraview\Console\Commands\LaraviewGenerateLayout;
 use Laraview\Console\Commands\LaraviewGenerateRegion;
 use Laraview\Console\Commands\LaraviewGenerateView;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
@@ -35,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
             LaraviewGenerateView::class,
             LaraviewGenerateRegion::class,
             LaraviewGenerateElement::class,
+            LaraviewGenerateLayout::class
         ]);
     }
 }

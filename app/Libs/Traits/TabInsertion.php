@@ -26,6 +26,20 @@ trait TabInsertion
      * @return $this
      * @throws Exception
      */
+    public function removeTab( $tab )
+    {
+        if( ! isset( $this->tabs[ $tab ] ) ) {
+            throw new Exception( "Unable to locate tab {$tab}" );
+        }
+        unset( $this->tabs[ $tab ] );
+        return $this;
+    }
+
+    /**
+     * @param $tab
+     * @return $this
+     * @throws Exception
+     */
     public function insertTab( $tab )
     {
         $this->tabs[ $tab ] = new $tab;

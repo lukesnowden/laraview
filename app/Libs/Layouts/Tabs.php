@@ -3,17 +3,20 @@
 namespace Laraview\Libs\Layouts;
 
 use Exception;
+use Laraview\Console\Commands\LaraviewGenerateLayout;
 use Laraview\Libs\BaseLayout;
 use Laraview\Libs\Blueprints\LayoutBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
 use Laraview\Libs\Blueprints\TabBlueprint;
 use Laraview\Libs\Elements\Traits\Formats\TabsBootstrap;
+use Laraview\Libs\Layouts\Tabs\GenerationSupport;
 use Laraview\Libs\Traits\TabInsertion;
 
 abstract class Tabs extends BaseLayout implements LayoutBlueprint
 {
 
-    use TabsBootstrap, TabInsertion;
+    use TabsBootstrap,
+        TabInsertion;
 
     /**
      * @var array
@@ -40,6 +43,14 @@ abstract class Tabs extends BaseLayout implements LayoutBlueprint
             $tabs = $tabs + $tab->elements();
         }
         return $tabs;
+    }
+
+    /**
+     * @param LaraviewGenerateLayout $console
+     */
+    public static function generate( LaraviewGenerateLayout $console )
+    {
+        new GenerationSupport( $console );
     }
 
     /**

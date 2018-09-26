@@ -26,6 +26,20 @@ trait ElementInsertion
      * @return $this
      * @throws Exception
      */
+    public function removeElement( $element )
+    {
+        if( ! isset( $this->elements[ $element ] ) ) {
+            throw new Exception( "Unable to locate element {$element}" );
+        }
+        unset( $this->elements[ $element ] );
+        return $this;
+    }
+
+    /**
+     * @param $element
+     * @return $this
+     * @throws Exception
+     */
     public function insertElement( $element )
     {
         $this->elements[ $element ] = new $element;

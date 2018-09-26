@@ -1,0 +1,19 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\LayoutBlueprint;
+use Laraview\Libs\Layouts\Tabs;
+[TABS_IMPORT]
+
+class [CLASS_NAME] extends Tabs implements LayoutBlueprint
+{
+
+    /**
+     * @var array
+     */
+    protected $tabs = [
+        [TABS]
+    ];
+
+}

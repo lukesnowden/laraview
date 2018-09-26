@@ -1,0 +1,24 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\TabBlueprint;
+use Laraview\Libs\Layouts\Tabs\Tab;
+
+class [CLASS_NAME] extends Tab implements TabBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * Elements to render into tab
+     * @var array
+     */
+    protected $elements = [
+
+    ];
+
+}

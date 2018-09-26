@@ -2,6 +2,9 @@
 
 namespace Laraview\Libs;
 
+use Exception;
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Blueprints\LayoutBlueprint;
 use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Elements\Checkbox;
@@ -11,6 +14,7 @@ use Laraview\Libs\Elements\Radio;
 use Laraview\Libs\Elements\Select;
 use Laraview\Libs\Elements\Text;
 use Laraview\Libs\Elements\Textarea;
+use Laraview\Libs\Layouts\Tabs;
 
 class Register implements RegisterBlueprint
 {
@@ -39,11 +43,51 @@ class Register implements RegisterBlueprint
     ];
 
     /**
+     * @var array
+     */
+    protected $registeredLayouts = [
+        Tabs::class
+    ];
+
+    /**
      * @return array
      */
     public function registeredElements()
     {
         return $this->registeredElements;
+    }
+
+    /**
+     * @return array
+     */
+    public function registeredLayouts()
+    {
+        return $this->registeredLayouts;
+    }
+
+    /**
+     * @param $layout
+     * @throws Exception
+     * @return void
+     */
+    public function registerLayout( $layout )
+    {
+        if( ! (new $layout) instanceof LayoutBlueprint ) {
+            throw new Exception( "{$layout} is not an instance of " . LayoutBlueprint::class );
+        }
+        $this->registeredLayouts[] = $layout;
+    }
+
+    /**
+     * @param $element
+     * @throws Exception
+     */
+    public function registerElement( $element )
+    {
+        if( ! (new $element) instanceof ElementBlueprint ) {
+            throw new Exception( "{$element} is not an instance of " . ElementBlueprint::class );
+        }
+        $this->registeredElements[] = $element;
     }
 
     /**
