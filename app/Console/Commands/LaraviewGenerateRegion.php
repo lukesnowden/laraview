@@ -139,6 +139,9 @@ class LaraviewGenerateRegion extends Command
     {
         $views = app( RegisterBlueprint::class )->views();
         $choices = array_combine( $views, $views );
+        if( ! $choices ) {
+            $this->error( "You currently have 0 Views registered. Please create one or register existing ones." );
+        }
         $choice = $this->choice( "What view is this region for?", $choices );
         if( ! in_array( $choice, $views ) ) {
             return $this->askWhichView();
