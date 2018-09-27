@@ -37,4 +37,13 @@ class [CLASS_NAME] extends Checkbox implements ElementBlueprint
         parent::value();
     }
 
+    /**
+     * Determines if the element is checked or not
+     * @return bool
+     */
+    public function status()
+    {
+        return false;
+    }
+
 }
