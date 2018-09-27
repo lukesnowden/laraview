@@ -2,8 +2,10 @@
 
 namespace Laraview\Libs\Elements;
 
+use Laraview\Console\Commands\LaraviewGenerateElement;
 use Laraview\Libs\BaseElement;
 use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Generate\InputWithOptionGeneration;
 use Laraview\Libs\Elements\Traits\Formats\SelectBootstrap;
 
 abstract class Select extends BaseElement implements ElementBlueprint
@@ -44,6 +46,18 @@ abstract class Select extends BaseElement implements ElementBlueprint
     public static function humanReadableName()
     {
         return 'Select Element';
+    }
+
+    /**
+     * @param $region
+     * @param LaraviewGenerateElement $console
+     * @return mixed
+     */
+    public static function generate( $region, LaraviewGenerateElement $console )
+    {
+        $generator = new InputWithOptionGeneration( $region, $console );
+        $generator->setStubPath( __DIR__ . '/../../../stubs/elements/select.stub' );
+        return $generator->create();
     }
 
 }
