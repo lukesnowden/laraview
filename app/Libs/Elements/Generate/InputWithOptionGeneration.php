@@ -63,7 +63,7 @@ class InputWithOptionGeneration extends InputGeneration
     private function askForOptions()
     {
         return $this->keyPair(
-            $this->ask( "Please enter options in key:value format separated with a comma (a:Apple,b:Pear)" )
+            $this->console->ask( "Please enter options in key:value format separated with a comma (a:Apple,b:Pear)" )
         );
     }
 
