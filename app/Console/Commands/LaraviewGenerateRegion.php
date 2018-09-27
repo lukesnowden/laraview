@@ -5,12 +5,13 @@ namespace Laraview\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Console\DetectsApplicationNamespace;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
-use ReflectionClass;
+use Laraview\Libs\Traits\FilePropertyEditor;
 
 class LaraviewGenerateRegion extends Command
 {
 
-    use DetectsApplicationNamespace;
+    use DetectsApplicationNamespace,
+        FilePropertyEditor;
 
     /**
      * The name and signature of the console command.
@@ -37,115 +38,129 @@ class LaraviewGenerateRegion extends Command
     }
 
     /**
-     * @throws \ReflectionException
+     * @return void
      */
     public function handle()
     {
-        $name = $this->ask( 'What is the name of your region (singular)?' );
-        $viewClass = $this->getView();
-        $placeholder = $this->getPlaceholder( $name );
+        $name = $this->askForNameOfRegion();
+        $viewClass = $this->askWhichView();
+        $placeholder = $this->generatePlaceholder( $name );
 
-        if( ! class_exists( '\\' . $viewClass ) ) {
+        try {
+            $view = self::getClassDetails( $viewClass );
+        } catch( \Exception $e ) {
             $this->error( "{$viewClass} does not exist" );
             exit;
         }
 
-        $this->generate( $name, $viewClass, $placeholder );
+        $region = $this->createTempRegion( $name, $view );
+        $this->generate( $region, $view, $placeholder );
         $this->info( "Use placeholder '{$placeholder}' in your template file!" );
 
     }
 
     /**
-     * @param $name
-     * @param $viewClass
+     * @param $inputName
+     * @param $viewDetails
+     * @return object
+     */
+    protected function createTempRegion( $inputName, $viewDetails )
+    {
+        $regionClassName = self::nameToClassName( $inputName, 'Region' );
+        if( $viewDetails->isLocal ) {
+            $fileName = $viewDetails->folder . "Regions" . DIRECTORY_SEPARATOR . "{$regionClassName}.php";
+            $namespaceWithClassName = $viewDetails->namespaceWithoutClassName . "\Regions\\{$regionClassName}";
+            return (object) [
+                'inputName' => $inputName,
+                'nameToClassFormat' => self::nameToClassName( $inputName, '' ),
+                'namespaceWithoutClassName' => $viewDetails->namespaceWithoutClassName . "\Regions",
+                'namespaceWithClassName' => $namespaceWithClassName,
+                'className' => $regionClassName,
+                'fileName' => $fileName,
+                'folder' => dirname( $fileName ) . DIRECTORY_SEPARATOR,
+                'isLocal' => self::isLocalNamespace( $namespaceWithClassName ),
+            ];
+        }
+        die( "NEED TO DO THIS BIT, NOT LOCAL ONES!!!!" );
+    }
+
+    /**
+     * @param $region
+     * @param $view
      * @param $placeholder
-     * @throws \ReflectionException
      */
-    private function generate( $name, $viewClass, $placeholder )
+    private function generate( $region, $view, $placeholder )
     {
-        $path = $this->getPath( $viewClass );
-        $className = ucfirst( camel_case( preg_replace( '/[^\d\w]/', '_', $name ) ) );
-        $content = $this->getContent( $className, $viewClass, $placeholder );
-        $filePath = $path . 'Regions' . DIRECTORY_SEPARATOR . "{$className}Region.php";
-        file_put_contents( $filePath, $content );
-        $this->info( "{$filePath} created!" );
+        $content = $this->getContent( $region, $placeholder );
+        file_put_contents( $region->fileName, $content );
+
+        $this->importRegionToView( $region, $view );
+        $this->info( "{$region->fileName} created!" );
     }
 
     /**
-     * @param $viewClass
-     * @return string
+     * @param $region
+     * @param $view
      */
-    private function getPath( $viewClass )
+    protected function importRegionToView( $region, $view )
     {
-        $parts = explode( '\\', preg_replace( '/^' . preg_quote( $this->getAppNamespace() ) . '/', '', $viewClass ) );
-        array_pop( $parts );
-        return app_path( implode( DIRECTORY_SEPARATOR, $parts ) ) . DIRECTORY_SEPARATOR;
+        if( $view->isLocal ) {
+            $this->addToClassesArray( $view->fileName, '$regions', function( &$rebuild ) use ( $region ) {
+                $rebuild[] = [ 319, "\\{$region->namespaceWithClassName}", 21 ];
+                $rebuild[] = [ 387, '::', 21 ];
+                $rebuild[] = [ 361, 'class', 21 ];
+            } );
+        }
     }
 
     /**
-     * @param $className
-     * @param $viewClass
+     * @param $region
      * @param $placeholder
      * @return mixed
-     * @throws \ReflectionException
      */
-    private function getContent( $className, $viewClass, $placeholder )
+    private function getContent( $region, $placeholder )
     {
         $file = file_get_contents( __DIR__ . '/../../../stubs/region.stub' );
         return str_replace( [
             '[NAMESPACE]',
-            '[VIEW_NAME]',
             '[CLASS_NAME]',
             '[PLACEHOLDER]',
         ], [
-            $this->getAppNamespace(),
-            $this->getViewFolderName( $viewClass ),
-            $className . 'Region',
+            $region->namespaceWithoutClassName,
+            $region->className,
             $placeholder
         ], $file );
     }
 
     /**
-     * @param $viewClass
-     * @return mixed
-     * @throws \ReflectionException
+     * @return string
      */
-    private function getViewFolderName( $viewClass )
+    private function askWhichView()
     {
-        return array_reverse( explode( '\\', ( new ReflectionClass( $viewClass ) )->getNamespaceName() ) )[ 0 ];
-    }
-
-    /**
-     * @param bool $askChoice
-     * @return mixed|string
-     */
-    private function getView( $askChoice = true )
-    {
-
-        if( $askChoice ) {
-            $choices = [ '-' => 'Enter Manually' ] + app( RegisterBlueprint::class )->views();
-            $view = $this->choice( "What view is this region for?", $choices );
-            if( $view !== '-' ) {
-                return $choices[ $view ];
-            }
+        $views = app( RegisterBlueprint::class )->views();
+        $choices = array_combine( $views, $views );
+        $choice = $this->choice( "What view is this region for?", $choices );
+        if( ! in_array( $choice, $views ) ) {
+            return $this->askWhichView();
         }
-
-        $view = $this->ask( "What view is this region for (fully qualified class name)?" );
-        if( ! class_exists( "\\" . $view ) ) {
-            $this->error( "View {$view} does not exist" );
-            return $this->getView( false );
-        }
-        return $view;
+        return $choice;
     }
 
     /**
      * @param $name
      * @return string
      */
-    private function getPlaceholder( $name )
+    private function generatePlaceholder( $name )
     {
-        //return $this->ask( 'What placeholder would you like to use for this region?' );
         return '[' . strtoupper( str_slug( $name, '_' ) ) . ']';
+    }
+
+    /**
+     * @return mixed
+     */
+    private function askForNameOfRegion()
+    {
+        return $this->ask( 'What is the name of your region?' );
     }
 
 }

@@ -4,9 +4,12 @@ namespace Laraview\Libs\Layouts\Tabs;
 
 use Laraview\Console\Commands\LaraviewGenerateLayout;
 use Illuminate\Container\Container;
+use Laraview\Libs\Traits\FilePropertyEditor;
 
 class GenerationSupport
 {
+
+    use FilePropertyEditor;
 
     /**
      * @var
@@ -26,7 +29,15 @@ class GenerationSupport
         $tabNames = $this->askForAllTabNames( $tabCount );
         $data = $this->generateFiles( $name, $region, $tabNames );
 
-        $this->alterRegionToIncludeTabLayout( $region, $data );
+        $file = "{$data->base_path}Region.php";
+
+        $this->addToClassesArray( $file, '$elements', function( &$rebuild ) use( $data ) {
+
+            $rebuild[] = [ 319, "\\{$data->base_namespace}\Layouts\\{$data->class_name}", 21 ];
+            $rebuild[] = [ 387, '::', 21 ];
+            $rebuild[] = [ 361, 'class', 21 ];
+
+        });
 
     }
 
@@ -259,91 +270,5 @@ class GenerationSupport
         /** @noinspection PhpUndefinedMethodInspection */
         return Container::getInstance()->getNamespace() . ltrim( $append, '\\' );
     }
-
-    /**
-     * @param string $region
-     * @param $data
-     */
-    private function alterRegionToIncludeTabLayout( string $region, $data )
-    {
-        $tokens = token_get_all( file_get_contents( "{$data->base_path}Region.php" ) );
-
-        $variable = '$elements';
-        $protectedCheck = false;
-        $nameCheck = false;
-
-        $rebuild = [];
-
-        foreach( $tokens as $position => $token ) {
-            if( is_array( $token ) ) {
-                if( token_name( $token[ 0 ] ) === 'T_PROTECTED' ) {
-                    $protectedCheck = true;
-                }
-                if( token_name( $token[ 0 ] ) === 'T_VARIABLE' && $token[ 1 ] === $variable && $protectedCheck === true ) {
-                    $nameCheck = true;
-                }
-            } else {
-                if( $token === ']' && $protectedCheck === true && $nameCheck === true ) {
-                    $rebuild = $this->trimBack( $rebuild );
-                    $rebuild[] = ',';
-                    $rebuild[] = [ 382, "\n", 21 ];
-                    $rebuild[] = [ 382, "\t", 21 ];
-                    $rebuild[] = [ 382, "\t", 21 ];
-                    $rebuild[] = [ 319, "\\{$data->base_namespace}\Layouts\\{$data->class_name}", 21 ];
-                    $rebuild[] = [ 387, '::', 21 ];
-                    $rebuild[] = [ 361, 'class', 21 ];
-                    $rebuild[] = [ 382, "\n", 21 ];
-                    $rebuild[] = [ 382, "\t", 21 ];
-                }
-            }
-            $rebuild[] = $token;
-        }
-
-        $source = self::reBuildBackToSource( $rebuild );
-        file_put_contents( "{$data->base_path}Region.php", $source );
-
-    }
-
-    /**
-     * @param $tokens
-     * @return string
-     */
-    public static function reBuildBackToSource( $tokens )
-    {
-        $source = '';
-        foreach( $tokens as $token ) {
-            if( is_array( $token ) ) {
-                $source .= $token[ 1 ];
-            } else {
-                $source .= $token;
-            }
-        }
-        return $source;
-    }
-
-    /**
-     * @param array $rebuild
-     * @return array
-     */
-    private function trimBack( array $rebuild )
-    {
-        $rebuild = array_reverse( $rebuild );
-        foreach( $rebuild as $key => $token ) {
-            if( is_array( $token ) ) {
-                if( $token[ 0 ] === 382 ) {
-                    unset( $rebuild[ $key ] );
-                    continue;
-                }
-                return array_reverse( $rebuild );
-            } else {
-                if( $token === ',' ) {
-                    unset( $rebuild[ $key ] );
-                    continue;
-                }
-            }
-            return array_reverse( $rebuild );
-        }
-    }
-
 
 }

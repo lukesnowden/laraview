@@ -1,6 +1,6 @@
 <?php
 
-namespace [NAMESPACE]Laraview\[VIEW_NAME]\Regions;
+namespace [NAMESPACE];
 
 use Laraview\Libs\Blueprints\RegionBlueprint;
 use Laraview\Libs\BaseRegion;
@@ -9,15 +9,15 @@ class [CLASS_NAME] extends BaseRegion implements RegionBlueprint
 {
 
     /**
+     * Placeholder to be used to render into template
      * @var string
      */
     protected $placeholder = '[PLACEHOLDER]';
 
     /**
+     * Elements or Layouts to be rendered into region
      * @var array
      */
-    protected $elements = [
-
-    ];
+    protected $elements = [];
 
 }

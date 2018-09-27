@@ -1,29 +1,29 @@
 <?php
 
-namespace [NAMESPACE]Laraview\[FOLDER_NAME];
+namespace [NAMESPACE];
 
 use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\BaseView;
 
-class [VIEW_CLASS_NAME] extends BaseView implements ViewBlueprint
+class [CLASS_NAME] extends BaseView implements ViewBlueprint
 {
 
     /**
+     * Dot notation destination to compiled blade template
      * @var string
      */
-    protected $path = '[PATH]';
+    protected $path = '[DOT_NOTATION_PATH]';
 
     /**
+     * Template used for compiling
      * @var string
      */
-    protected $baseViewPath = '[BASE_VIEW_PATH]';
+    protected $baseViewPath = 'template.blade.php';
 
     /**
      * Regions to attach to this view
      * @var array
      */
-    protected $regions = [
-
-    ];
+    protected $regions = [];
 
 }

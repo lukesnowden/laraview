@@ -3,12 +3,12 @@
 namespace Laraview\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\DetectsApplicationNamespace;
+use Laraview\Libs\Traits\FilePropertyEditor;
 
 class LaraviewGenerateView extends Command
 {
 
-    use DetectsApplicationNamespace;
+    use FilePropertyEditor;
 
     /**
      * The name and signature of the console command.
@@ -41,47 +41,64 @@ class LaraviewGenerateView extends Command
      */
     public function handle()
     {
-        $name = $this->ask( 'What is the name of your view (singular)?' );
-        $path = $this->ask( 'What would you like the dot-notation path of your view to be when generated (pages.edit.view)?' );
-        $this->createFolders();
-        $this->generate( $name, $path );
+        $name = $this->askForNameOfView();
+        $path = $this->askForDotNotationPath();
+        $view = $this->createTempView( $name );
+        $this->generate( $view, $path );
     }
 
     /**
-     * @param $name
-     * @param $path
+     * @param $inputName
+     * @return object
      */
-    private function generate( $name, $path )
+    protected function createTempView( $inputName )
     {
-        $folderName = ucfirst( camel_case( preg_replace( '/[^\d\w]/', '_', $name ) ) );
-        $file = str_replace( [
+        $viewClassName = self::nameToClassName( $inputName, 'View' );
+        $namespaceWithoutClassName = self::appNamespace( 'Laraview\\' . self::nameToClassName( $inputName ) );
+        $namespaceWithClassName = "{$namespaceWithoutClassName}\\" . $viewClassName;
+        $fileName = app_path( str_replace( '\\', DIRECTORY_SEPARATOR, preg_replace( '/^' . preg_quote( self::appNamespace(), '/' ) . '/', '', $namespaceWithClassName ) ) ) . '.php';
+        return (object) [
+            'inputName' => $inputName,
+            'nameToClassFormat' => self::nameToClassName( $inputName, '' ),
+            'namespaceWithClassName' => $namespaceWithClassName,
+            'namespaceWithoutClassName' => $namespaceWithoutClassName,
+            'className' => $viewClassName,
+            'fileName' => $fileName,
+            'folder' => dirname( $fileName ),
+            'isLocal' => true,
+        ];
+    }
+
+    /**
+     * @param $view
+     * @param $dotNotationPath
+     */
+    private function generate( $view, $dotNotationPath )
+    {
+        $contents = $this->getContent( $view, $dotNotationPath );
+        $this->createRelatedFoldersFor( $view->nameToClassFormat );
+        $this->createTemplate( $view->folder . DIRECTORY_SEPARATOR . 'template.blade.php' );
+        file_put_contents( $view->fileName, $contents );
+        $this->info( "{$view->fileName} created!" );
+    }
+
+    /**
+     * @param $view
+     * @param $dotNotationPath
+     * @return mixed
+     */
+    protected function getContent( $view, $dotNotationPath )
+    {
+        $file = file_get_contents( __DIR__ . '/../../../stubs/view.stub' );
+        return str_replace( [
             '[NAMESPACE]',
-            '[VIEW_CLASS_NAME]',
-            '[PATH]',
-            '[BASE_VIEW_PATH]',
-            '[FOLDER_NAME]',
+            '[CLASS_NAME]',
+            '[DOT_NOTATION_PATH]',
         ], [
-            $this->getAppNamespace(),
-            $folderName . 'View',
-            $path,
-            'template.blade.php',
-            $folderName
-        ], file_get_contents( __DIR__ . '/../../../stubs/view.stub' ) );
-        $this->createRelatedFoldersFor( $folderName );
-        $this->createTemplate( $folderName );
-        $filePath = app_path( "Laraview/{$folderName}/{$folderName}View.php" );
-        file_put_contents( $filePath, $file );
-        $this->info( "{$filePath} created!" );
-    }
-
-    /**
-     * @return void
-     */
-    private function createFolders()
-    {
-        if( ! file_exists( app_path( 'Laraview' ) ) ) {
-            mkdir( app_path( 'Laraview' ), 0655 );
-        }
+            $view->namespaceWithoutClassName,
+            $view->className,
+            $dotNotationPath
+        ], $file );
     }
 
     /**
@@ -90,6 +107,7 @@ class LaraviewGenerateView extends Command
     private function createRelatedFoldersFor( string $folderName )
     {
         $folders = [
+            app_path( 'Laraview' ),
             app_path( "Laraview/{$folderName}" ),
             app_path( "Laraview/{$folderName}/Regions" )
         ];
@@ -101,13 +119,30 @@ class LaraviewGenerateView extends Command
     }
 
     /**
-     * @param $folderName
+     * @param $templateFileName
      */
-    private function createTemplate( $folderName )
+    private function createTemplate( $templateFileName )
     {
         file_put_contents(
-            app_path( "Laraview/{$folderName}/template.blade.php" ),
+            $templateFileName,
             file_get_contents( __DIR__ . '/../../../stubs/template.stub' )
         );
     }
+
+    /**
+     * @return mixed
+     */
+    protected function askForDotNotationPath()
+    {
+        return $this->ask( 'What would you like the dot-notation path of your view to be when generated (pages.edit.view)?' );
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function askForNameOfView()
+    {
+        return $this->ask( 'What is the name of your view (singular)?' );
+    }
+
 }
