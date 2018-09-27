@@ -8,7 +8,7 @@ use Laraview\Libs\Elements\Radio;
 class [CLASS_NAME] extends Radio implements ElementBlueprint
 {
 
-    **
+    /**
      * Name of input
      * @var string
      */

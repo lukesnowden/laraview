@@ -8,7 +8,7 @@ use Laraview\Libs\Elements\Checkbox;
 class [CLASS_NAME] extends Checkbox implements ElementBlueprint
 {
 
-    **
+    /**
      * Name of input
      * @var string
      */
