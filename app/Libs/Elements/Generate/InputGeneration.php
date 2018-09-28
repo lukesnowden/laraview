@@ -2,7 +2,6 @@
 
 namespace Laraview\Libs\Elements\Generate;
 
-use Exception;
 use Laraview\Console\Commands\LaraviewGenerateElement;
 use Laraview\Libs\Traits\FilePropertyEditor;
 
@@ -80,32 +79,6 @@ class InputGeneration
     }
 
     /**
-     * @param $path
-     * @param null $orig
-     * @return mixed
-     */
-    protected function createFolder( $path, $orig = null )
-    {
-        $path = rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
-        if( ! is_null( $orig ) ) {
-            $orig = rtrim( $orig, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
-        }
-        try {
-            if( ! file_exists( $path ) ) {
-                mkdir( $path, 0655 );
-                return $this->createFolder( $orig, null );
-            }
-        } catch( Exception $e ) {
-            if( $e->getMessage() === 'mkdir(): No such file or directory' ) {
-                if( ! preg_match( '/^' . preg_quote( app_path(), '/' ) . '/', $path ) ) {
-                    die( "This has gone too far!!" );
-                }
-                return $this->createFolder( dirname( $path ), is_null( $orig ) ? $path : $orig );
-            }
-        }
-    }
-
-    /**
      * @param $inputName
      * @return object
      */
@@ -153,26 +126,6 @@ class InputGeneration
         $className = $elementClassName;
 
         return (object) compact( 'inputName', 'nameToClassFormat', 'namespaceWithoutClassName', 'namespaceWithClassName', 'className', 'fileName', 'folder', 'isLocal' );
-    }
-
-    /**
-     * @param $namespace
-     * @return string
-     */
-    protected function getGlobalRegionPrefix( $namespace )
-    {
-        $segments = explode( '\\', $namespace );
-        $segments[0] = rtrim( self::appNamespace(), '\\' );
-        return preg_replace( '/Region$/', '', implode( '\\', $segments ) );
-    }
-
-    /**
-     * @param $namespace
-     * @return string
-     */
-    protected function localNamespaceToFileName( $namespace )
-    {
-        return app_path( str_replace( '\\', DIRECTORY_SEPARATOR, preg_replace( '/^' . preg_quote( self::appNamespace(), '\\' ) . '/', '', $namespace ) ) ) . '.php';
     }
 
     /**

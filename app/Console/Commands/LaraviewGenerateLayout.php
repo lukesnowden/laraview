@@ -2,12 +2,15 @@
 
 namespace Laraview\Console\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
+use Laraview\Libs\Traits\FilePropertyEditor;
 
 class LaraviewGenerateLayout extends Command
 {
+
+    use FilePropertyEditor;
+
     /**
      * The name and signature of the console command.
      *
@@ -53,14 +56,53 @@ class LaraviewGenerateLayout extends Command
     public function handle()
     {
         $this->contract = app( RegisterBlueprint::class );
-        $layoutClassName = $this->choice( "What layout would you like to create?", array_combine( $this->contract->registeredLayouts(), $this->contract->registeredLayouts() ) );
+        $region = $this->askWhichRegionElementIsFor();
+        $layoutClassName = $this->askWhichLayoutToCreate();
+
+        try {
+            $region = self::getClassDetails( $region );
+        } catch( \Exception $e ) {
+            $this->error( "{$region->fileName} does not exist" );
+            exit;
+        }
 
         if( ! method_exists( $layoutClassName, 'generate' ) ) {
             $this->error( "Layout {$layoutClassName} does not provide generation support, exiting..." );
             exit;
         }
 
-        $layoutClassName::generate( $this );
+        $layoutClassName::generate( $region, $this );
 
+    }
+
+    /**
+     * @return string
+     */
+    protected function askWhichLayoutToCreate()
+    {
+        return $this->choice( "What layout would you like to create?", array_combine( $this->contract->registeredLayouts(), $this->contract->registeredLayouts() ) );
+    }
+
+    /**
+     * @param bool $askChoice
+     * @return mixed|string
+     */
+    private function askWhichRegionElementIsFor( $askChoice = true )
+    {
+
+        if( $askChoice ) {
+            $choices = [ '-' => 'Enter Manually' ] + app( RegisterBlueprint::class )->regions();
+            $region = $this->choice( "What region is this element for?", $choices );
+            if( $region !== '-' ) {
+                return $choices[ $region ];
+            }
+        }
+
+        $region = $this->ask( "What region is this element for (fully qualified class name)?" );
+        if( ! class_exists( "\\" . $region ) ) {
+            $this->error( "Region {$region} does not exist" );
+            return $this->askWhichRegionElementIsFor( false );
+        }
+        return $region;
     }
 }

@@ -3,7 +3,6 @@
 namespace Laraview\Libs\Layouts\Tabs;
 
 use Laraview\Console\Commands\LaraviewGenerateLayout;
-use Illuminate\Container\Container;
 use Laraview\Libs\Traits\FilePropertyEditor;
 
 class GenerationSupport
@@ -17,28 +16,245 @@ class GenerationSupport
     protected $console;
 
     /**
+     * @var
+     */
+    protected $region;
+
+    /**
+     * GenerationSupport constructor.
+     * @param $region
      * @param LaraviewGenerateLayout $console
      */
-    public function __construct( LaraviewGenerateLayout $console )
+    public function __construct( $region, LaraviewGenerateLayout $console )
     {
         $this->console = $console;
-        $name = $this->askForNewLayoutName();
-        $tabCount = (int) $console->ask( "How many tabs would you like to initially create?" );
-        $region = $console->choice( "What region would you like to attach this tabs layout to?", array_combine( $console->contract()->regions(), $console->contract()->regions() ) );
+        $this->region = $region;
+        $this->region->nameToClassFormat = preg_replace( '/Region$/', '', $this->region->className );
+    }
 
+    /**
+     * @return mixed
+     */
+    public function create()
+    {
+        $name = $this->askForNewTabsLayoutName();
+        $tabCount = $this->askHowManyTabs();
         $tabNames = $this->askForAllTabNames( $tabCount );
-        $data = $this->generateFiles( $name, $region, $tabNames );
+        $tabLayout = $this->createTempTabsLayout( $name );
+        $tabs = $this->createTempTabs( $name, $tabNames );
+        $contents = $this->getContents( $tabLayout, $tabs );
+        $this->createFolder( $tabLayout->folder );
+        file_put_contents( $tabLayout->fileName, $contents );
 
-        $file = "{$data->base_path}Region.php";
+        foreach( $tabs as $tab ) {
+            $contents = $this->getTabContents( $tab );
+            $this->createFolder( $tab->folder );
+            file_put_contents( $tab->fileName, $contents );
+        }
 
-        $this->addToClassesArray( $file, '$elements', function( &$rebuild ) use( $data ) {
+        $this->importLayoutToRegion( $tabLayout );
+        return $tabLayout->fileName;
+    }
 
-            $rebuild[] = [ 319, "\\{$data->base_namespace}\Layouts\\{$data->class_name}", 21 ];
-            $rebuild[] = [ 387, '::', 21 ];
-            $rebuild[] = [ 361, 'class', 21 ];
+    /**
+     * @param $tabLayout
+     */
+    protected function importLayoutToRegion( $tabLayout )
+    {
+        if( $this->region->isLocal ) {
+            $this->addToClassesArray( $this->region->fileName, '$elements', function( &$rebuild ) use ( $tabLayout ) {
+                $rebuild[] = [ 319, "\\{$tabLayout->namespaceWithClassName}", 21 ];
+                $rebuild[] = [ 387, '::', 21 ];
+                $rebuild[] = [ 361, 'class', 21 ];
+            } );
+        }
+    }
 
-        });
+    /**
+     * @param $tab
+     * @return mixed
+     */
+    protected function getTabContents( $tab )
+    {
+        return str_replace(
+            [
+                '[NAMESPACE]',
+                '[NAME]',
+                '[CLASS_NAME]',
+            ],
+            [
+                $tab->namespaceWithoutClassName,
+                $tab->inputName,
+                $tab->className,
+            ],
+            file_get_contents( self::stubsDir( 'layouts/tabs/tab.stub' ) )
+        );
+    }
 
+    /**
+     * @param $tabLayout
+     * @param $tabs
+     * @return mixed
+     */
+    protected function getContents( $tabLayout, $tabs )
+    {
+        return str_replace(
+            [
+                '[NAMESPACE]',
+                '[TABS_IMPORT]',
+                '[CLASS_NAME]',
+                '[TABS]',
+            ],
+            [
+                $tabLayout->namespaceWithoutClassName,
+                $this->tabDataSetToImportString( $tabs ),
+                $tabLayout->className,
+                $this->tabDataSetToArrayDefinition( $tabs )
+            ],
+            file_get_contents( self::stubsDir( 'layouts/tabs/tabs.stub' ) )
+        );
+    }
+
+    /**
+     * @param $tabs
+     * @return string
+     */
+    protected function tabDataSetToArrayDefinition( $tabs )
+    {
+        $string = '';
+        foreach( $tabs as $tab ) {
+            $string .= "{$tab->className}::class,\n\t\t";
+        }
+        return rtrim( $string );
+    }
+
+    /**
+     * @param $tabs
+     * @return string
+     */
+    protected function tabDataSetToImportString( $tabs )
+    {
+        $string = '';
+        foreach( $tabs as $tab ) {
+            $string .= "use {$tab->namespaceWithClassName};\n";
+        }
+        return rtrim( $string );
+    }
+
+    /**
+     * @param $inputName
+     * @return object
+     */
+    protected function createTempTabsLayout( $inputName )
+    {
+        $tabsClassName = self::nameToClassName( $inputName, 'Tabs' );
+        if( $this->region->isLocal ) {
+            return $this->createLocalTempTabs( $inputName, $tabsClassName );
+        }
+        return $this->createExternalTempTabs( $inputName, $tabsClassName );
+    }
+
+    /**
+     * @param $inputName
+     * @param $tabNames
+     * @return array
+     */
+    protected function createTempTabs( $inputName, $tabNames )
+    {
+        $tabs = [];
+        foreach( $tabNames as $tabName ) {
+            $tabsClassNameShort = self::nameToClassName( $inputName, '' );
+            $tabClassName = self::nameToClassName( $tabName, 'Tab' );
+            if( $this->region->isLocal ) {
+                $tabs[] = $this->createLocalTempTab( $tabName, $tabsClassNameShort, $tabClassName );
+            } else {
+                $tabs[] = $this->createExternalTempTab( $tabName, $tabsClassNameShort, $tabClassName );
+            }
+        }
+        return $tabs;
+    }
+
+    /**
+     * @param $inputName
+     * @param $tabsClassNameShort
+     * @param $tabClassName
+     * @return object
+     */
+    protected function createLocalTempTab( $inputName, $tabsClassNameShort, $tabClassName )
+    {
+        $fileName = $this->region->folder . "{$this->region->nameToClassFormat}" . DIRECTORY_SEPARATOR . "Layouts" . DIRECTORY_SEPARATOR . "{$tabsClassNameShort}" . DIRECTORY_SEPARATOR . "Tabs" . DIRECTORY_SEPARATOR . "{$tabClassName}.php";
+        $namespaceWithoutClassName = $this->region->namespaceWithoutClassName . "\\{$this->region->nameToClassFormat}\Layouts\\{$tabsClassNameShort}\Tabs";
+        $namespaceWithClassName = $namespaceWithoutClassName . "\\{$tabClassName}";
+        $nameToClassFormat = self::nameToClassName( $inputName, '' );
+        $className = $tabClassName;
+        $folder = dirname( $fileName ) . DIRECTORY_SEPARATOR;
+        $isLocal = self::isLocalNamespace( $namespaceWithClassName );
+
+        return (object) compact( 'inputName', 'nameToClassFormat', 'namespaceWithoutClassName', 'namespaceWithClassName', 'className', 'fileName', 'folder', 'isLocal' );
+    }
+
+    /**
+     * @param $inputName
+     * @param $tabsClassNameShort
+     * @param $tabClassName
+     * @return object
+     */
+    protected function createExternalTempTab( $inputName, $tabsClassNameShort, $tabClassName )
+    {
+        $namespaceWithoutClassName = $this->getGlobalRegionPrefix( $this->region->namespaceWithClassName ) . "\Layouts\\{$tabsClassNameShort}\Tabs";
+        $namespaceWithClassName = $namespaceWithoutClassName . "\\{$tabClassName}";
+        $fileName = $this->localNamespaceToFileName( $namespaceWithClassName );
+        $nameToClassFormat = self::nameToClassName( $inputName, '' );
+        $className = $tabClassName;
+        $folder = dirname( $fileName ) . DIRECTORY_SEPARATOR;
+        $isLocal = true;
+
+        return (object) compact( 'inputName', 'nameToClassFormat', 'namespaceWithoutClassName', 'namespaceWithClassName', 'className', 'fileName', 'folder', 'isLocal' );
+    }
+
+    /**
+     * @param $inputName
+     * @param $tabsClassName
+     * @return object
+     */
+    protected function createLocalTempTabs( $inputName, $tabsClassName )
+    {
+        $fileName = $this->region->folder . "{$this->region->nameToClassFormat}" . DIRECTORY_SEPARATOR . "Layouts" . DIRECTORY_SEPARATOR . "{$tabsClassName}.php";
+        $namespaceWithoutClassName = $this->region->namespaceWithoutClassName . "\\{$this->region->nameToClassFormat}\Layouts";
+        $namespaceWithClassName = $namespaceWithoutClassName . "\\{$tabsClassName}";
+        $nameToClassFormat = self::nameToClassName( $inputName, '' );
+        $className = $tabsClassName;
+        $folder = dirname( $fileName ) . DIRECTORY_SEPARATOR;
+        $isLocal = self::isLocalNamespace( $namespaceWithClassName );
+
+        return (object) compact( 'inputName', 'nameToClassFormat', 'namespaceWithoutClassName', 'namespaceWithClassName', 'className', 'fileName', 'folder', 'isLocal' );
+    }
+
+    /**
+     * @param $inputName
+     * @param $tabsClassName
+     * @return object
+     */
+    protected function createExternalTempTabs( $inputName, $tabsClassName )
+    {
+        $namespaceWithoutClassName = $this->region->namespaceWithoutClassName . "\\{$this->region->nameToClassFormat}\Layouts";
+        $namespaceWithClassName = $namespaceWithoutClassName . "\\{$tabsClassName}";
+        $fileName = $this->localNamespaceToFileName( $namespaceWithClassName );
+        $nameToClassFormat = self::nameToClassName( $inputName, '' );
+        $className = $tabsClassName;
+        $folder = dirname( $fileName ) . DIRECTORY_SEPARATOR;
+        $isLocal = self::isLocalNamespace( $namespaceWithClassName );
+
+        return (object) compact( 'inputName', 'nameToClassFormat', 'namespaceWithoutClassName', 'namespaceWithClassName', 'className', 'fileName', 'folder', 'isLocal' );
+
+    }
+
+    /**
+     * @return int
+     */
+    protected function askHowManyTabs()
+    {
+        return (int) $this->console->ask( "How many tabs would you like to initially create?" );
     }
 
     /**
@@ -57,16 +273,16 @@ class GenerationSupport
     /**
      * @return mixed
      */
-    protected function askForNewLayoutName()
+    protected function askForNewTabsLayoutName()
     {
         $name = $this->console->ask( "What would you like this tabs layout to be called?" );
         if( strlen( $name ) < 5 ) {
             $this->console->error( "Please provide a name longer than 5 characters" );
-            return $this->askForNewLayoutName();
+            return $this->askForNewTabsLayoutName();
         }
         if( is_numeric( $name[ 0 ] ) ) {
             $this->console->error( "Please provide a name that begins with a letter." );
-            return $this->askForNewLayoutName();
+            return $this->askForNewTabsLayoutName();
         }
         return $name;
     }
@@ -90,185 +306,12 @@ class GenerationSupport
     }
 
     /**
-     * @param $data
-     * @return mixed
-     */
-    protected function createMainTabsFile( $data )
-    {
-        $template = str_replace(
-            [
-                '[NAMESPACE]',
-                '[TABS_IMPORT]',
-                '[CLASS_NAME]',
-                '[TABS]',
-            ],
-            [
-                "{$data->base_namespace}\Layouts",
-                self::genTabsImport( $data ),
-                $data->class_name,
-                self::genTabsDefinition( $data )
-            ],
-            file_get_contents( self::stubsDir( 'layouts/tabs/tabs.stub' ) )
-        );
-
-        file_put_contents( $data->class_file, $template );
-        return $data->class_file;
-    }
-
-    /**
-     * @param $data
-     * @param $className
-     * @param $filePath
-     * @return mixed
-     */
-    protected function createTabFile( $data, $className, $filePath )
-    {
-        $template = str_replace(
-            [
-                '[NAMESPACE]',
-                '[NAME]',
-                '[CLASS_NAME]',
-            ],
-            [
-                "{$data->base_namespace}\Layouts\\{$data->class_name}\Tabs",
-                $data->tabs_names[ $className ],
-                $className,
-            ],
-            file_get_contents( self::stubsDir( 'layouts/tabs/tab.stub' ) )
-        );
-        file_put_contents( $filePath, $template );
-        return $filePath;
-    }
-
-    /**
-     * @param $name
-     * @param $region
-     * @param $tabNames
-     * @return object
-     */
-    protected function generateFiles( $name, $region, $tabNames )
-    {
-        $data = $this->getDetailsForCreation( $name, $region, $tabNames );
-
-        $this->console->info(
-            $this->createMainTabsFile( $data ) . ' created...'
-        );
-
-        foreach( $data->tabs as $className => $filePath ) {
-            $this->console->info(
-                $this->createTabFile( $data, $className, $filePath ) . ' created...'
-            );
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param $data
-     * @return string
-     */
-    public static function genTabsImport( $data )
-    {
-        $str = '';
-        foreach( $data->tabs as $className => $filePath ) {
-            $str .= "use {$data->base_namespace}\Layouts\\{$data->class_name}\Tabs\\{$className};\n";
-        }
-        return rtrim( $str );
-    }
-
-    /**
-     * @param $data
-     * @return string
-     */
-    public static function genTabsDefinition( $data )
-    {
-        $str = '';
-        foreach( $data->tabs as $className => $filePath ) {
-            $str .= "{$className}::class,\n\t\t";
-        }
-        return rtrim( $str );
-    }
-
-    /**
-     * @param $name
-     * @param $className
-     * @param $tabNames
-     * @param string $trim
-     * @param int $depth
-     * @return object
-     */
-    protected function getDetailsForCreation( $name, $className, $tabNames, $trim = 'Region', $depth = 3 )
-    {
-        $trimmed = preg_replace( "/{$trim}$/", '', $className );
-        $correctDepth = array_slice( explode( '\\', $trimmed ), ( 0 - $depth ), $depth );
-        $layoutPath = self::createFolders( array_merge( $correctDepth, [ 'Layouts', self::convertNameToClassName( $name ) ] ) );
-        $tabsPath = self::createFolders( array_merge( $correctDepth, [ 'Layouts', self::convertNameToClassName( $name ), 'Tabs' ] ) );
-
-        $data = [
-            'base_namespace' => self::appNamespace() . implode( '\\', array_merge( [ 'Laraview' ], $correctDepth ) ),
-            'base_path' => self::createFolders( $correctDepth ),
-            'layout_path' => $layoutPath,
-            'tabs' => [],
-            'tabs_names' => [],
-            'class_file' => $layoutPath . '.php',
-            'class_name' => self::convertNameToClassName( $name )
-        ];
-
-        foreach( $tabNames as $tabName ) {
-            $data[ 'tabs' ][ self::convertNameToClassName( $tabName, 'Tab' ) ] = $tabsPath . '/' . self::convertNameToClassName( $tabName, 'Tab.php' );
-            $data[ 'tabs_names' ][ self::convertNameToClassName( $tabName, 'Tab' ) ] = $tabName;
-        }
-
-        return (object) $data;
-
-    }
-
-    /**
-     * @param $array
-     * @return string
-     */
-    public static function createFolders( $array )
-    {
-        if( reset( $array ) !== 'Laraview' ) {
-            array_unshift( $array, 'Laraview' );
-        }
-        $path = app_path();
-        while( $array ) {
-            $path .= '/' . array_shift( $array );
-            if( ! file_exists( $path ) ) {
-                mkdir( $path, 0655 );
-            }
-        }
-        return $path;
-    }
-
-    /**
-     * @param $name
-     * @param string $append
-     * @return string
-     */
-    public static function convertNameToClassName( $name, $append = 'Tabs' )
-    {
-        return ucfirst( camel_case( str_slug( $name, '_' ) ) ) . $append;
-    }
-
-    /**
      * @param string $append
      * @return string
      */
     public static function stubsDir( $append = '' )
     {
         return __DIR__ . '/../../../../stubs/' . ltrim( $append, '/' );
-    }
-
-    /**
-     * @param string $append
-     * @return string
-     */
-    public static function appNamespace( $append = '' )
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        return Container::getInstance()->getNamespace() . ltrim( $append, '\\' );
     }
 
 }

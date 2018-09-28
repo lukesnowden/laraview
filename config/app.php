@@ -156,7 +156,6 @@ return [
          */
         Laraview\Providers\AppServiceProvider::class,
         Laraview\Providers\RouteServiceProvider::class,
-        Laraview\Providers\DemoServiceProvider::class
 
     ],
 
