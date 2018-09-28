@@ -3,97 +3,105 @@
 namespace Laraview\Libs\Traits;
 
 use Exception;
-use Laraview\Libs\Blueprints\TabBlueprint;
+use Laraview\Libs\Blueprints\ElementBlueprint;
 
-trait TabInsertion
+trait ElementInsertion
 {
 
     /**
-     * @param $tab
+     * @param $element
      * @return mixed
      * @throws Exception
      */
-    public function getTab( $tab )
+    public function getElement( $element )
     {
-        if( ! isset( $this->tabs[ $tab ] ) ) {
-            throw new Exception( "Unable to locate tab {$tab}" );
+        if( ! isset( $this->elements[ $element ] ) ) {
+            throw new Exception( "Unable to locate element {$element}" );
         }
-        return $this->tabs[ $tab ];
+        return $this->elements[ $element ];
     }
 
     /**
-     * @param $tab
+     * @param $element
      * @return $this
      * @throws Exception
      */
-    public function removeTab( $tab )
+    public function removeElement( $element )
     {
-        if( ! isset( $this->tabs[ $tab ] ) ) {
-            throw new Exception( "Unable to locate tab {$tab}" );
+        if( ! isset( $this->elements[ $element ] ) ) {
+            throw new Exception( "Unable to locate element {$element}" );
         }
-        unset( $this->tabs[ $tab ] );
+        unset( $this->elements[ $element ] );
         return $this;
     }
 
     /**
-     * @param $tab
+     * @param $element
      * @return $this
      * @throws Exception
      */
-    public function insertTab( $tab )
+    public function insertElement( $element )
     {
-        $this->tabs[ $tab ] = new $tab;
-        if( ! $this->tabs[ $tab ] instanceof TabBlueprint ) {
-            throw new Exception( "Element {$tab} must implement " . TabBlueprint::class );
+        $this->elements[ $element ] = new $element;
+        if( ! $this->elements[ $element ] instanceof ElementBlueprint ) {
+            throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
         }
-        $this->tabs[ $tab ]->region( $this->region );
+        if( property_exists( $this, 'region' ) ) {
+            $this->elements[ $element ]->region( $this->region );
+        } else {
+            $this->elements[ $element ]->region( $this );
+        }
         return $this;
     }
 
     /**
-     * @param $tab
+     * @param $element
      * @param $targetElement
-     * @return $this
      * @throws Exception
      */
-    public function insertTabBefore( $tab, $targetElement )
+    public function insertElementBefore( $element, $targetElement )
     {
         $new = [];
-        foreach( $this->tabs as $potentialTarget => $val ) {
+        foreach( $this->elements as $potentialTarget => $val ) {
             if( $potentialTarget === $targetElement ) {
-                $new[ $tab ] = new $tab;
-                if( ! $new[ $tab ] instanceof TabBlueprint ) {
-                    throw new Exception( "Tab {$tab} must implement " . TabBlueprint::class );
+                $new[ $element ] = new $element;
+                if( ! $new[ $element ] instanceof ElementBlueprint ) {
+                    throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
                 }
-                $new[ $tab ]->region( $this->region );
+                if( property_exists( $this, 'region' ) ) {
+                    $new[ $element ]->region( $this->region );
+                } else {
+                    $new[ $element ]->region( $this );
+                }
             }
             $new[ $potentialTarget ] = $val;
         }
-        $this->tabs = $new;
-        return $this;
+        $this->elements = $new;
     }
 
     /**
-     * @param $tab
+     * @param $element
      * @param $targetElement
-     * @return $this
      * @throws Exception
      */
-    public function insertTabAfter( $tab, $targetElement )
+    public function insertElementAfter( $element, $targetElement )
     {
         $new = [];
-        foreach( $this->tabs as $potentialTarget => $val ) {
+        foreach( $this->elements as $potentialTarget => $val ) {
             $new[ $potentialTarget ] = $val;
             if( $potentialTarget === $targetElement ) {
-                $new[ $tab ] = new $tab;
-                if( ! $new[ $tab ] instanceof TabBlueprint ) {
-                    throw new Exception( "Tab {$tab} must implement " . TabBlueprint::class );
+                $new[ $element ] = new $element;
+                if( ! $new[ $element ] instanceof ElementBlueprint ) {
+                    throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
                 }
-                $new[ $tab ]->region( $this->region );
+                if( property_exists( $this, 'region' ) ) {
+                    $new[ $element ]->region( $this->region );
+                } else {
+                    $new[ $element ]->region( $this );
+                }
             }
         }
-        $this->tabs = $new;
-        return $this;
+        $this->elements = $new;
     }
 
 }
