@@ -35,6 +35,14 @@ abstract class Tabs extends BaseLayout implements LayoutBlueprint
     }
 
     /**
+     * @return array
+     */
+    public function tabs()
+    {
+        return $this->tabs;
+    }
+
+    /**
      * @return array|mixed
      */
     public function elements()

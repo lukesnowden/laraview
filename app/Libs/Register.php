@@ -188,6 +188,17 @@ class Register implements RegisterBlueprint
         return $regions;
     }
 
+    public function regionElements()
+    {
+        $elements = [];
+        foreach( $this->views as $view ) {
+            foreach( $view->regions() as $region ) {
+                $elements += $region->elements();
+            }
+        }
+        return $elements;
+    }
+
     /**
      * @return array
      */

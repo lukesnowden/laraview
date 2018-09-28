@@ -52,7 +52,7 @@ class LaraviewGenerateView extends Command
         $path = $this->askForDotNotationPath();
         $view = $this->createTempView( $name );
         $this->generate( $view, $path );
-        
+
         if( $this->compile ) {
             $this->call( "laraview:compile" );
         }
