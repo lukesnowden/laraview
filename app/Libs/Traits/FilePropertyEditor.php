@@ -3,8 +3,8 @@
 namespace Laraview\Libs\Traits;
 
 use Exception;
-use Illuminate\Container\Container;
 use Laraview\Libs\Layouts\Tabs\GenerationSupport;
+use Illuminate\Container\Container;
 use ReflectionClass;
 use ReflectionException;
 
@@ -17,7 +17,7 @@ trait FilePropertyEditor
      */
     public function ableToEdit( string $class )
     {
-        if( preg_match( '/^' . preg_quote( GenerationSupport::appNamespace(), '/' ) . '/', $class ) ) {
+        if( preg_match( '/^' . preg_quote( self::appNamespace(), '/' ) . '/', $class ) ) {
             return true;
         }
         return false;
@@ -34,14 +34,17 @@ trait FilePropertyEditor
 
     /**
      * @param $namespace
-     * @param string $append
      * @return null|string|string[]
      */
-    protected function getGlobalRegionPrefix( $namespace, $append = 'Region' )
+    protected function getGlobalRegionPrefix( $namespace )
     {
         $segments = explode( '\\', $namespace );
         $segments[0] = rtrim( self::appNamespace(), '\\' );
-        return preg_replace( '/' . preg_quote( $append ) . '$/', '', implode( '\\', $segments ) );
+        $string = implode( '\\', $segments );
+        foreach( [ 'Region', 'View', 'Element', 'Tab', 'Layout' ] as $append ) {
+            $string = preg_replace( '/' . preg_quote( $append ) . '$/', '', $string );
+        }
+        return $string;
     }
 
     /**
@@ -198,7 +201,7 @@ trait FilePropertyEditor
      */
     public static function isLocalNamespace( $namespace )
     {
-        return preg_match( '/^' . preg_quote( Container::getInstance()->getNamespace(), '/' ) . '/', $namespace );
+        return preg_match( '/^' . preg_quote( self::appNamespace(), '/' ) . '/', $namespace );
     }
 
     /**
@@ -239,7 +242,7 @@ trait FilePropertyEditor
      */
     public static function appNamespace( $append = '' )
     {
-        return GenerationSupport::appNamespace() . $append;
+        return Container::getInstance()->getNamespace() . $append;
     }
 
 }
