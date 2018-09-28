@@ -59,7 +59,7 @@ class LaraviewGenerateElement extends Command
 
         $whatFor = $this->askIfForARegionOrLayout();
 
-        if( $whatFor == 1 ) {
+        if( $whatFor === "Region" ) {
             $region = $this->askWhichRegionElementIsFor();
         } else {
             $layout = $this->askWhichLayoutElementIsFor();
@@ -96,7 +96,7 @@ class LaraviewGenerateElement extends Command
         $this->info( "{$fileName} created!" );
 
         if( $this->compile ) {
-            $this->call( "laraview:compile" );
+            $this->info( exec( "php artisan laraview:compile" ) );
         }
     }
 
@@ -123,7 +123,7 @@ class LaraviewGenerateElement extends Command
         $this->info( "{$fileName} created!" );
 
         if( $this->compile ) {
-            $this->call( "laraview:compile" );
+            $this->info( exec( "php artisan laraview:compile" ) );
         }
     }
 
