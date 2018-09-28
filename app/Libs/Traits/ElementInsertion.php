@@ -46,7 +46,10 @@ trait ElementInsertion
         if( ! $this->elements[ $element ] instanceof ElementBlueprint ) {
             throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
         }
-        $this->elements[ $element ]->region( $this->region );
+        $this->elements[ $element ]->region( $this );
+        if( property_exists( $this, 'region' ) ) {
+            $this->elements[ $element ]->region( $this->region );
+        }
         return $this;
     }
 
@@ -64,7 +67,10 @@ trait ElementInsertion
                 if( ! $new[ $element ] instanceof ElementBlueprint ) {
                     throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
                 }
-                $new[ $element ]->region( $this->region );
+                $this->elements[ $element ]->region( $this );
+                if( property_exists( $this, 'region' ) ) {
+                    $this->elements[ $element ]->region( $this->region );
+                }
             }
             $new[ $potentialTarget ] = $val;
         }
@@ -86,7 +92,10 @@ trait ElementInsertion
                 if( ! $new[ $element ] instanceof ElementBlueprint ) {
                     throw new Exception( "Element {$element} must implement " . ElementBlueprint::class );
                 }
-                $new[ $element ]->region( $this->region );
+                $this->elements[ $element ]->region( $this );
+                if( property_exists( $this, 'region' ) ) {
+                    $this->elements[ $element ]->region( $this->region );
+                }
             }
         }
         $this->elements = $new;
