@@ -15,7 +15,7 @@ class LaraviewGenerateView extends Command
      *
      * @var string
      */
-    protected $signature = 'laraview:view';
+    protected $signature = 'laraview:view {--c|--compile}';
 
     /**
      * The console command description.
@@ -23,6 +23,11 @@ class LaraviewGenerateView extends Command
      * @var string
      */
     protected $description = 'Generates a View class to register to Laraview';
+
+    /**
+     * @var bool
+     */
+    protected $compile = false;
 
     /**
      * Create a new command instance.
@@ -41,10 +46,16 @@ class LaraviewGenerateView extends Command
      */
     public function handle()
     {
+
+        $this->compile = $this->option( 'compile' );
         $name = $this->askForNameOfView();
         $path = $this->askForDotNotationPath();
         $view = $this->createTempView( $name );
         $this->generate( $view, $path );
+        
+        if( $this->compile ) {
+            $this->call( "laraview:compile" );
+        }
     }
 
     /**

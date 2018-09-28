@@ -18,7 +18,7 @@ class LaraviewGenerateElement extends Command
      *
      * @var string
      */
-    protected $signature = 'laraview:element';
+    protected $signature = 'laraview:element {--c|--compile}';
 
     /**
      * The console command description.
@@ -26,6 +26,11 @@ class LaraviewGenerateElement extends Command
      * @var string
      */
     protected $description = 'Generates files for a Laraview element';
+
+    /**
+     * @var bool
+     */
+    protected $compile = false;
 
     /**
      * Create a new command instance.
@@ -42,6 +47,7 @@ class LaraviewGenerateElement extends Command
      */
     public function handle()
     {
+        $this->compile = $this->option( 'compile' );
         $region = $this->askWhichRegionElementIsFor();
         $element = $this->askWhatTypeOfElement();
 
@@ -59,6 +65,10 @@ class LaraviewGenerateElement extends Command
 
         $fileName = $element::generate( $region, $this );
         $this->info( "{$fileName} created!" );
+
+        if( $this->compile ) {
+            $this->call( "laraview:compile" );
+        }
     }
 
     /**

@@ -16,7 +16,7 @@ class LaraviewGenerateLayout extends Command
      *
      * @var string
      */
-    protected $signature = 'laraview:layout';
+    protected $signature = 'laraview:layout {--c|--compile}';
 
     /**
      * The console command description.
@@ -29,6 +29,11 @@ class LaraviewGenerateLayout extends Command
      * @var
      */
     protected $contract;
+
+    /**
+     * @var bool
+     */
+    protected $compile = false;
 
     /**
      * Create a new command instance.
@@ -55,6 +60,7 @@ class LaraviewGenerateLayout extends Command
      */
     public function handle()
     {
+        $this->compile = $this->option( 'compile' );
         $this->contract = app( RegisterBlueprint::class );
         $region = $this->askWhichRegionElementIsFor();
         $layoutClassName = $this->askWhichLayoutToCreate();
@@ -73,6 +79,9 @@ class LaraviewGenerateLayout extends Command
 
         $layoutClassName::generate( $region, $this );
 
+        if( $this->compile ) {
+            $this->call( "laraview:compile" );
+        }
     }
 
     /**

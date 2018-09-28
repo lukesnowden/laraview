@@ -18,7 +18,7 @@ class LaraviewGenerateRegion extends Command
      *
      * @var string
      */
-    protected $signature = 'laraview:region';
+    protected $signature = 'laraview:region {--c|--compile}';
 
     /**
      * The console command description.
@@ -26,6 +26,11 @@ class LaraviewGenerateRegion extends Command
      * @var string
      */
     protected $description = 'Generates files for a Laraview region';
+
+    /**
+     * @var bool
+     */
+    protected $compile = false;
 
     /**
      * Create a new command instance.
@@ -42,6 +47,7 @@ class LaraviewGenerateRegion extends Command
      */
     public function handle()
     {
+        $this->compile = $this->option( 'compile' );
         $name = $this->askForNameOfRegion();
         $viewClass = $this->askWhichView();
         $placeholder = $this->generatePlaceholder( $name );
@@ -57,6 +63,9 @@ class LaraviewGenerateRegion extends Command
         $this->generate( $region, $view, $placeholder );
         $this->info( "Use placeholder '{$placeholder}' in your template file!" );
 
+        if( $this->compile ) {
+            $this->call( "laraview:compile" );
+        }
     }
 
     /**
