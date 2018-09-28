@@ -90,20 +90,17 @@ class InputGeneration
         if( ! is_null( $orig ) ) {
             $orig = rtrim( $orig, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
         }
-
         try {
             if( ! file_exists( $path ) ) {
                 mkdir( $path, 0655 );
-                if( ! is_null( $orig ) && $path !== $orig ) {
-                    return $this->createFolder( $orig, null );
-                }
+                return $this->createFolder( $orig, null );
             }
         } catch( Exception $e ) {
             if( $e->getMessage() === 'mkdir(): No such file or directory' ) {
                 if( ! preg_match( '/^' . preg_quote( app_path(), '/' ) . '/', $path ) ) {
                     die( "This has gone too far!!" );
                 }
-                return $this->createFolder( dirname( $path ), $path );
+                return $this->createFolder( dirname( $path ), is_null( $orig ) ? $path : $orig );
             }
         }
     }
@@ -116,20 +113,66 @@ class InputGeneration
     {
         $elementClassName = self::nameToClassName( $inputName, 'Element' );
         if( $this->region->isLocal ) {
-            $fileName = $this->region->folder . "{$this->region->nameToClassFormat}" . DIRECTORY_SEPARATOR . "Elements" . DIRECTORY_SEPARATOR . "{$elementClassName}.php";
-            $namespaceWithoutClassName = $this->region->namespaceWithoutClassName . "\\{$this->region->nameToClassFormat}\Elements";
-            $namespaceWithClassName = $namespaceWithoutClassName . "\\{$elementClassName}";
-            return (object) [
-                'inputName' => $inputName,
-                'nameToClassFormat' => self::nameToClassName( $inputName, '' ),
-                'namespaceWithoutClassName' => $namespaceWithoutClassName,
-                'namespaceWithClassName' => $namespaceWithClassName,
-                'className' => $elementClassName,
-                'fileName' => $fileName,
-                'folder' => dirname( $fileName ) . DIRECTORY_SEPARATOR,
-                'isLocal' => self::isLocalNamespace( $namespaceWithClassName ),
-            ];
+            return $this->createLocalTempElement( $inputName, $elementClassName );
         }
+        return $this->createExternalTempElement( $inputName, $elementClassName );
+    }
+
+    /**
+     * @param $inputName
+     * @param $elementClassName
+     * @return object
+     */
+    protected function createLocalTempElement( $inputName, $elementClassName )
+    {
+        $fileName = $this->region->folder . "{$this->region->nameToClassFormat}" . DIRECTORY_SEPARATOR . "Elements" . DIRECTORY_SEPARATOR . "{$elementClassName}.php";
+        $namespaceWithoutClassName = $this->region->namespaceWithoutClassName . "\\{$this->region->nameToClassFormat}\Elements";
+        $namespaceWithClassName = $namespaceWithoutClassName . "\\{$elementClassName}";
+        $nameToClassFormat = self::nameToClassName( $inputName, '' );
+        $className = $elementClassName;
+        $folder = dirname( $fileName ) . DIRECTORY_SEPARATOR;
+        $isLocal = self::isLocalNamespace( $namespaceWithClassName );
+
+        return (object) compact( 'inputName', 'nameToClassFormat', 'namespaceWithoutClassName', 'namespaceWithClassName', 'className', 'fileName', 'folder', 'isLocal' );
+    }
+
+
+    /**
+     * @param $inputName
+     * @param $elementClassName
+     * @return object
+     */
+    protected function createExternalTempElement( $inputName, $elementClassName )
+    {
+        $namespaceWithoutClassName = $this->getGlobalRegionPrefix( $this->region->namespaceWithClassName ) . '\Elements';
+        $namespaceWithClassName = $namespaceWithoutClassName . "\\{$elementClassName}";
+        $fileName = $this->localNamespaceToFileName( $namespaceWithClassName );
+        $folder = dirname( $fileName ) . DIRECTORY_SEPARATOR;
+        $nameToClassFormat = self::nameToClassName( $inputName, '' );
+        $isLocal = true;
+        $className = $elementClassName;
+
+        return (object) compact( 'inputName', 'nameToClassFormat', 'namespaceWithoutClassName', 'namespaceWithClassName', 'className', 'fileName', 'folder', 'isLocal' );
+    }
+
+    /**
+     * @param $namespace
+     * @return string
+     */
+    protected function getGlobalRegionPrefix( $namespace )
+    {
+        $segments = explode( '\\', $namespace );
+        $segments[0] = rtrim( self::appNamespace(), '\\' );
+        return preg_replace( '/Region$/', '', implode( '\\', $segments ) );
+    }
+
+    /**
+     * @param $namespace
+     * @return string
+     */
+    protected function localNamespaceToFileName( $namespace )
+    {
+        return app_path( str_replace( '\\', DIRECTORY_SEPARATOR, preg_replace( '/^' . preg_quote( self::appNamespace(), '\\' ) . '/', '', $namespace ) ) ) . '.php';
     }
 
     /**
