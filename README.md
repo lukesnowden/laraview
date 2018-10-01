@@ -90,11 +90,13 @@ slightly to incorporate two regions, `Left Column` and `Right Column`. We can de
 
 @section( 'main' )
     <div class="container">
-        <div class="left-column col-8">
-            [LEFT_COLUMN]
-        </div>
-        <div class="right-column col-4">
-            [RIGHT_COLUMN]
+        <div class="row">
+            <div class="left-column col-8">
+                [LEFT_COLUMN]
+            </div>
+            <div class="right-column col-4">
+                [RIGHT_COLUMN]
+            </div>
         </div>
     </div>
 @endsection
@@ -224,9 +226,8 @@ For instance, creating a module for `Google Shopping Feed`, we would like to add
 a checkbox and drop down onto the product edit view to indicated that said product
 is to be added and to which Google Shopping category.
 
-We can do this by listening to when the region is attached and then insert our 
-elements using the regions `insertElement` method. Very soon, there will also 
-be an `insertElementBefore` and `insertElementAfter` methods available.
+We can do this by listening to when the region is attached and then inserting our 
+elements using the `insertElement`, `insertElementBefore` or `insertElementAfter` methods.
 
 ## MIT License
 

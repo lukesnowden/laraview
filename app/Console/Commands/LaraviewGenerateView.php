@@ -42,7 +42,7 @@ class LaraviewGenerateView extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
@@ -54,7 +54,7 @@ class LaraviewGenerateView extends Command
         $this->generate( $view, $path );
 
         if( $this->compile ) {
-            $this->call( "laraview:compile" );
+            $this->info( exec( "php artisan laraview:compile" ) );
         }
     }
 

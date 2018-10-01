@@ -64,7 +64,7 @@ class LaraviewGenerateRegion extends Command
         $this->info( "Use placeholder '{$placeholder}' in your template file!" );
 
         if( $this->compile ) {
-            $this->call( "laraview:compile" );
+            $this->info( exec( "php artisan laraview:compile" ) );
         }
     }
 

@@ -3,7 +3,6 @@
 namespace Laraview\Libs\Traits;
 
 use Exception;
-use Laraview\Libs\Layouts\Tabs\GenerationSupport;
 use Illuminate\Container\Container;
 use ReflectionClass;
 use ReflectionException;

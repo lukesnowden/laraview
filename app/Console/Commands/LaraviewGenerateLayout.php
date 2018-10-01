@@ -56,7 +56,7 @@ class LaraviewGenerateLayout extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
@@ -80,7 +80,7 @@ class LaraviewGenerateLayout extends Command
         $layoutClassName::generate( $region, $this );
 
         if( $this->compile ) {
-            $this->call( "laraview:compile" );
+            $this->info( exec( "php artisan laraview:compile" ) );
         }
     }
 
@@ -89,7 +89,12 @@ class LaraviewGenerateLayout extends Command
      */
     protected function askWhichLayoutToCreate()
     {
-        return $this->choice( "What layout would you like to create?", array_combine( $this->contract->registeredLayouts(), $this->contract->registeredLayouts() ) );
+        return $this->choice( "What layout would you like to create?",
+            array_combine(
+                $this->contract->registeredLayouts(),
+                $this->contract->registeredLayouts()
+            )
+        );
     }
 
     /**
