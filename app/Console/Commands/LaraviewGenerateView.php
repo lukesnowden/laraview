@@ -124,7 +124,7 @@ class LaraviewGenerateView extends Command
         ];
         foreach( $folders as $folder ) {
             if( ! file_exists( $folder ) ) {
-                mkdir( $folder, 0655 );
+                mkdir( $folder, 0755, 'R' );
             }
         }
     }

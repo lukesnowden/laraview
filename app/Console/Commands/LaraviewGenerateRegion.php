@@ -3,15 +3,13 @@
 namespace Laraview\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\DetectsApplicationNamespace;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Traits\FilePropertyEditor;
 
 class LaraviewGenerateRegion extends Command
 {
 
-    use DetectsApplicationNamespace,
-        FilePropertyEditor;
+    use FilePropertyEditor;
 
     /**
      * The name and signature of the console command.

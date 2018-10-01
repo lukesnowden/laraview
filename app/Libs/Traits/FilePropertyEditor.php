@@ -59,7 +59,7 @@ trait FilePropertyEditor
         }
         try {
             if( ! file_exists( $path ) ) {
-                mkdir( $path, 0655 );
+                mkdir( $path, 0755, 'R' );
                 return $this->createFolder( $orig, null );
             }
         } catch( Exception $e ) {

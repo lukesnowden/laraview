@@ -5,16 +5,13 @@ namespace Laraview\Console\Commands;
 use Illuminate\Console\Command;
 use Laraview\Libs\Blueprints\LayoutBlueprint;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
-use Illuminate\Console\DetectsApplicationNamespace;
-use Laraview\Libs\Blueprints\TabBlueprint;
 use Laraview\Libs\Layouts\Tabs;
 use Laraview\Libs\Traits\FilePropertyEditor;
 
 class LaraviewGenerateElement extends Command
 {
 
-    use DetectsApplicationNamespace,
-        FilePropertyEditor;
+    use FilePropertyEditor;
 
     /**
      * The name and signature of the console command.

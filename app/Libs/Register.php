@@ -148,7 +148,7 @@ class Register implements RegisterBlueprint
                 touch( $path );
             } else {
                 if( ! file_exists( $path ) ) {
-                    mkdir( $path, 0655 );
+                    mkdir( $path, 0755, 'R' );
                 }
             }
         }
