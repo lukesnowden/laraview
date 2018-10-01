@@ -66,7 +66,7 @@ trait TabsBootstrap
         $x = 0;
         foreach( $this->tabs as $key => $tab ) {
             $html .= sprintf( '<div class="tab-pane pt-5 %s" id="%s" role="tabpanel" aria-labelledby="%s">%s</div>',
-                ! $x ? 'show active' : '',
+                ! $x ? 'active' : '',
                 str_slug( $tab->name() ) . '-tab',
                 str_slug( $tab->name() ),
                 $tab->render()

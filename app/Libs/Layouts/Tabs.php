@@ -3,7 +3,6 @@
 namespace Laraview\Libs\Layouts;
 
 use Exception;
-use Laraview\Console\Commands\LaraviewGenerateElement;
 use Laraview\Console\Commands\LaraviewGenerateLayout;
 use Laraview\Libs\BaseLayout;
 use Laraview\Libs\Blueprints\LayoutBlueprint;
@@ -57,6 +56,7 @@ abstract class Tabs extends BaseLayout implements LayoutBlueprint
     /**
      * @param $region
      * @param LaraviewGenerateLayout $console
+     * @return mixed
      */
     public static function generate( $region, LaraviewGenerateLayout $console )
     {
