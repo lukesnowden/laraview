@@ -44,6 +44,11 @@ trait TabsBootstrap
         $html = '';
         $x = 0;
         foreach( $this->tabs as $key => $tab ) {
+            if( method_exists( $tab, 'renderTabHead' ) ) {
+                $html .= $tab->renderTabHead( $tab, $x );
+                $x++;
+                continue;
+            }
             $html .= sprintf( '<li class="nav-item">
                 <a class="nav-link %s" id="%s" data-toggle="tab" href="#%s" role="tab" aria-controls="home" aria-selected="%s">%s</a>
             </li>',
@@ -66,6 +71,11 @@ trait TabsBootstrap
         $html = '';
         $x = 0;
         foreach( $this->tabs as $key => $tab ) {
+            if( method_exists( $tab, 'renderTabBody' ) ) {
+                $html .= $tab->renderTabBody( $tab, $x );
+                $x++;
+                continue;
+            }
             $html .= sprintf( '<div class="tab-pane pt-5 %s" id="%s" role="tabpanel" aria-labelledby="%s">%s</div>',
                 ! $x ? 'active' : '',
                 str_slug( $tab->name() ) . '-tab',
