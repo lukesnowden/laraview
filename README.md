@@ -14,12 +14,9 @@ Next, you must install the service provider to `config/app.php`:
 ```php
 'providers' => [
     // ...
-    Laraview\Providers\AppServiceProvider::class,
-    // Laraview\Providers\DemoServiceProvider::class
+    Laraview\Providers\AppServiceProvider::class
 ];
 ```
-
-Uncomment the demo service provider to run a demo test.
 
 And finally run the following command to generate your view files
 
@@ -27,10 +24,13 @@ And finally run the following command to generate your view files
 php artisan laraview:compile
 ```
 
+## Demo
+
+A demo can be found at https://github.com/lukesnowden/customer-views. Just pull the package down, include the service provider and compile the views.
+
 ## Walk-through
 
-Included is a demo service provider which you can use to figure out how this package works but I'd also 
-like to provide a walk-through to demonstrate how this package can be used in a production application.
+I'd like to provide a walk-through to demonstrate how this package can be used in a production application.
 
 Lets imagine we have an admin panel which has a users section where you can edit a user's details. Lets 
 create that View: 
