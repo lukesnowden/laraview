@@ -45,11 +45,12 @@ trait TabsBootstrap
         $x = 0;
         foreach( $this->tabs as $key => $tab ) {
             $html .= sprintf( '<li class="nav-item">
-                <a class="nav-link %s" id="%s" data-toggle="tab" href="#%s" role="tab" aria-controls="home" aria-selected="true">%s</a>
+                <a class="nav-link %s" id="%s" data-toggle="tab" href="#%s" role="tab" aria-controls="home" aria-selected="%s">%s</a>
             </li>',
                 ! $x ? 'active' : '',
                 str_slug( $tab->name() ) . '-tab-trigger',
                 str_slug( $tab->name() ) . '-tab',
+                ! $x ? 'true' : 'false',
                 $tab->name()
             );
             $x++;
