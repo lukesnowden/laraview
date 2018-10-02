@@ -100,6 +100,15 @@ abstract class BaseElement implements ElementBlueprint
     }
 
     /**
+     * @param $model
+     * @param $request
+     */
+    public function receivePayload( $model, $request )
+    {
+        $model->{$this->name} = $request->input( $this->name );
+    }
+
+    /**
      * @return null|string
      */
     abstract public static function humanReadableName();

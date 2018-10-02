@@ -260,4 +260,17 @@ class Register implements RegisterBlueprint
         }
     }
 
+    /**
+     * @param $viewClass
+     * @param $model
+     * @param $request
+     */
+    public function dispatchPayload( $viewClass, $model, $request )
+    {
+        $view = new $viewClass;
+        foreach( $view->elements() as $element ) {
+            $element->receivePayload( $model, $request );
+        }
+    }
+
 }
