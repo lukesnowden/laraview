@@ -1,0 +1,40 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Date;
+
+class [CLASS_NAME] extends Date implements ElementBlueprint
+{
+
+    /**
+     * Name of input
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * Label text
+     * @var string
+     */
+    protected $label = '[LABEL]';
+
+    /**
+     * Input elements HTML attributes
+     * @var array
+     */
+    protected $attributes = [
+        [ATTRIBUTES]
+    ];
+
+    /**
+     * @return mixed
+     * $this->region->getView()->data() // Use this data to inject...
+     */
+    public function value()
+    {
+        parent::value();
+    }
+
+}
