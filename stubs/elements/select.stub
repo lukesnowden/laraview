@@ -35,14 +35,21 @@ class [CLASS_NAME] extends Select implements ElementBlueprint
     ];
 
     /**
+     * $this->region->getView()->data() // Use this data to inject...
      * @return mixed
      */
     public function value()
     {
-        /**
-         * $this->region->getView()->data() // Use this data to inject...
-         */
         parent::value();
+    }
+
+    /**
+     * @param $model
+     * @param $request
+     */
+    public function receivePayload( $model, $request )
+    {
+        $model->{$this->name} = $request->input( $this->name );
     }
 
 }

@@ -46,4 +46,13 @@ class [CLASS_NAME] extends Checkbox implements ElementBlueprint
         return false;
     }
 
+    /**
+     * @param $model
+     * @param $request
+     */
+    public function receivePayload( $model, $request )
+    {
+        $model->{$this->name} = $request->input( $this->name );
+    }
+
 }

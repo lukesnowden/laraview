@@ -37,4 +37,13 @@ class [CLASS_NAME] extends Textarea implements ElementBlueprint
         parent::value();
     }
 
+    /**
+     * @param $model
+     * @param $request
+     */
+    public function receivePayload( $model, $request )
+    {
+        $model->{$this->name} = $request->input( $this->name );
+    }
+
 }
