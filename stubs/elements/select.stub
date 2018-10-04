@@ -35,7 +35,7 @@ class [CLASS_NAME] extends Select implements ElementBlueprint
     ];
 
     /**
-     * $this->region->getView()->data() // Use this data to inject...
+     * use $this->data( $dotNotation = '' ) to retrieve injected data
      * @return mixed
      */
     public function value()

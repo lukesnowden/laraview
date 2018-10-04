@@ -1,0 +1,28 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\LayoutBlueprint;
+use Laraview\Libs\Layouts\Table;
+[COLUMNS_IMPORT]
+
+class [CLASS_NAME] extends Table implements LayoutBlueprint
+{
+
+    /**
+     * @var array
+     */
+    protected $columns = [
+        [COLUMNS]
+    ];
+
+    /**
+     * use $this->data( $dotNotation = '' ) to retrieve injected data
+     * @return void
+     */
+    public function displaying()
+    {
+        parent::displaying();
+    }
+
+}

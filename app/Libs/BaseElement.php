@@ -109,6 +109,27 @@ abstract class BaseElement implements ElementBlueprint
     }
 
     /**
+     * @param null $dotNotationIndex
+     * @return array
+     */
+    public function data( $dotNotationIndex = null )
+    {
+        $data = $this->region->getView()->data();
+        if( is_null( $dotNotationIndex ) ) {
+            return $data;
+        }
+        return array_get( $data, $dotNotationIndex );
+    }
+
+    /**
+     * @return array
+     */
+    public function getValueReliantObjects()
+    {
+        return [ $this ];
+    }
+
+    /**
      * @return null|string
      */
     abstract public static function humanReadableName();
@@ -127,5 +148,10 @@ abstract class BaseElement implements ElementBlueprint
      * @param RegionBlueprint $region
      */
     public function created( RegionBlueprint $region ) {}
+
+    /**
+     * @return void
+     */
+    public function displaying() {}
 
 }

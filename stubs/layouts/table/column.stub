@@ -1,0 +1,21 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\ColumnBlueprint;
+use Laraview\Libs\Layouts\Table\Column;
+
+class [CLASS_NAME] extends Column implements ColumnBlueprint
+{
+
+    /**
+     * @var string
+     */
+    protected $rowKey = '[ROW_KEY]';
+
+    /**
+     * @var string
+     */
+    protected $header = '[HEADER]';
+
+}

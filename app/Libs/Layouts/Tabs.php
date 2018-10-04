@@ -91,4 +91,18 @@ abstract class Tabs extends BaseLayout implements LayoutBlueprint
         }
     }
 
+    /**
+     * @return array
+     */
+    public function getValueReliantObjects()
+    {
+        $objects = [];
+        foreach( $this->tabs as $tab ) {
+            foreach( $tab->elements() as $element ) {
+                $objects[] = $element;
+            }
+        }
+        return $objects;
+    }
+
 }

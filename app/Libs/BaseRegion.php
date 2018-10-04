@@ -99,4 +99,20 @@ abstract class BaseRegion implements RegionBlueprint
         return $this->elements;
     }
 
+    /**
+     * @return array
+     */
+    public function getValueReliantObjects()
+    {
+        $objects = [];
+        foreach( $this->elements as $element ) {
+            if( method_exists( $element, 'getValueReliantObjects' ) ) {
+                foreach( $element->getValueReliantObjects() as $object ) {
+                    $objects[] = $object;
+                }
+            }
+        }
+        return $objects;
+    }
+
 }

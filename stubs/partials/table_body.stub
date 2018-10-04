@@ -1,0 +1,7 @@
+@foreach( $%s->rows() as $row )
+    <tr>
+        @foreach( $%s->columns() as $column )
+            <td>{!! $column->render( $row ) !!}</td>
+        @endforeach
+    </tr>
+@endforeach

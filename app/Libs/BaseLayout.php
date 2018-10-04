@@ -30,6 +30,24 @@ abstract class BaseLayout implements LayoutBlueprint
     }
 
     /**
+     * @param null $dotNotationIndex
+     * @return array
+     */
+    public function data( $dotNotationIndex = null )
+    {
+        $data = $this->region->getView()->data();
+        if( is_null( $dotNotationIndex ) ) {
+            return $data;
+        }
+        return array_get( $data, $dotNotationIndex );
+    }
+
+    /**
+     * @return void
+     */
+    public function displaying() {}
+
+    /**
      * @param RegionBlueprint $region
      */
     abstract public function created( RegionBlueprint $region );

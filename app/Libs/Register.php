@@ -15,6 +15,7 @@ use Laraview\Libs\Elements\Radio;
 use Laraview\Libs\Elements\Select;
 use Laraview\Libs\Elements\Text;
 use Laraview\Libs\Elements\Textarea;
+use Laraview\Libs\Layouts\Table;
 use Laraview\Libs\Layouts\Tabs;
 
 class Register implements RegisterBlueprint
@@ -48,7 +49,8 @@ class Register implements RegisterBlueprint
      * @var array
      */
     protected $registeredLayouts = [
-        Tabs::class
+        Tabs::class,
+        Table::class
     ];
 
     /**
@@ -190,6 +192,9 @@ class Register implements RegisterBlueprint
         return $regions;
     }
 
+    /**
+     * @return array
+     */
     public function regionElements()
     {
         $elements = [];
@@ -239,6 +244,7 @@ class Register implements RegisterBlueprint
                 $viewObject->setViewData( $view->getData() );
                 $data = [];
                 foreach( $viewObject->elements() as $element ) {
+                    $element->displaying();
                     $data[ $element->valueKeyName() ] = old( $element->name() ) ? old( $element->name() ) : $element->value();
                     if( method_exists( $element, 'statusKeyName' ) ) {
                         $data[ $element->statusKeyName() ] = old( $element->name() ) ? 'checked' : ( $element->status() ? 'checked' : '' );

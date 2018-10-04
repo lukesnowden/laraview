@@ -30,7 +30,7 @@ class [CLASS_NAME] extends Text implements ElementBlueprint
 
     /**
      * @return mixed
-     * $this->region->getView()->data() // Use this data to inject...
+     * use $this->data( $dotNotation = '' ) to retrieve injected data
      */
     public function value()
     {
