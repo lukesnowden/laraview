@@ -49,14 +49,15 @@ trait TabsBootstrap
                 $x++;
                 continue;
             }
-            $html .= sprintf( '<li class="nav-item">
+            $html .= sprintf( '<li class="nav-item %s">
                 <a class="nav-link %s" id="%s" data-toggle="tab" href="#%s" role="tab" aria-controls="home" aria-selected="%s">%s</a>
             </li>',
+                ! $x ? 'active' : '',
                 ! $x ? 'active' : '',
                 str_slug( $tab->name() ) . '-tab-trigger',
                 str_slug( $tab->name() ) . '-tab',
                 ! $x ? 'true' : 'false',
-                $tab->name()
+                ucwords( $tab->name() )
             );
             $x++;
         }
