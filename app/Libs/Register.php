@@ -187,7 +187,7 @@ class Register implements RegisterBlueprint
     {
         $regions = [];
         foreach( $this->views as $view ) {
-            $regions = $regions + array_keys( $view->regions() );
+            $regions = array_merge( $regions, array_keys( $view->regions() ) );
         }
         return $regions;
     }
