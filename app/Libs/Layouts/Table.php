@@ -9,10 +9,13 @@ use Laraview\Libs\Blueprints\ColumnBlueprint;
 use Laraview\Libs\Blueprints\LayoutBlueprint;
 use Laraview\Libs\Blueprints\RegionBlueprint;
 use Laraview\Libs\Layouts\Table\GenerationSupport;
+use Laraview\Libs\Traits\ColumnInsertion;
 use ReflectionClass;
 
 abstract class Table extends BaseLayout implements LayoutBlueprint
 {
+
+    use ColumnInsertion;
 
     /**
      * @var array
