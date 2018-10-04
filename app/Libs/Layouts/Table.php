@@ -139,7 +139,7 @@ abstract class Table extends BaseLayout implements LayoutBlueprint
     {
         $html = '<tr>';
         foreach( $this->columns as $column ) {
-            $html .= sprintf( '<th>%s</th>', $column->header() );
+            $html .= sprintf( '<th %s>%s</th>', $column->attributesAsHtml(), $column->header() );
         }
         return $html . '</tr>';
     }

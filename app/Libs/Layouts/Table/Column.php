@@ -53,4 +53,16 @@ abstract class Column
         return $row->getAttribute( $this->rowKey() );
     }
 
+    /**
+     * @return string
+     */
+    public function attributesAsHtml()
+    {
+        $attributes = '';
+        foreach( $this->attributes as $name => $value ) {
+            $attributes .= " {$name}=\"{$value}\"";
+        }
+        return trim( $attributes );
+    }
+
 }
