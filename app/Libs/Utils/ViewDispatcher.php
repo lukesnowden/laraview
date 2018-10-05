@@ -30,6 +30,17 @@ class ViewDispatcher
 
     /**
      * @param $key
+     * @return mixed
+     */
+    public function get( $key )
+    {
+        if( isset( $this->data[ $key ] ) ) {
+            return $this->data[ $key ];
+        }
+    }
+
+    /**
+     * @param $key
      * @param $value
      * @return $this
      */

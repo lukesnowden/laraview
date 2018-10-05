@@ -11,7 +11,6 @@ trait ModalBootstrap
     public function render()
     {
         $this->preRender();
-        echo "Use {$this->trigger()} for this modal...\n";
         return $this->wrapper(
             $this->modalHeader( $this->name() ),
             $this->modalBody(
