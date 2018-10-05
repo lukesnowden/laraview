@@ -64,6 +64,7 @@ class LaraviewGenerateElement extends Command
                 $tab = $this->askWhichTab( $this->layouts[ $layout ] );
                 return $this->createForTab( $tab );
             }
+            return $this->createForLayout( $layout );
         }
 
         return $this->createForRegion( $region );
@@ -90,6 +91,30 @@ class LaraviewGenerateElement extends Command
         }
 
         $fileName = $element::generate( $tab, $this );
+        $this->info( "{$fileName} created!" );
+
+        if( $this->compile ) {
+            $this->info( exec( "php artisan laraview:compile" ) );
+        }
+    }
+
+    protected function createForLayout( $layout )
+    {
+        try {
+            $layout = self::getClassDetails( $layout );
+        } catch( \Exception $e ) {
+            $this->error( "{$layout->fileName} does not exist" );
+            exit;
+        }
+
+        $element = $this->askWhatTypeOfElement();
+
+        if( ! method_exists( $element, 'generate' ) ) {
+            $this->error( "Element {$element} does not allow self generation, exiting..." );
+            exit;
+        }
+
+        $fileName = $element::generate( $layout, $this );
         $this->info( "{$fileName} created!" );
 
         if( $this->compile ) {

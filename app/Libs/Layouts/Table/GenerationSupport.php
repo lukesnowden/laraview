@@ -212,8 +212,8 @@ class GenerationSupport extends \Laraview\Libs\Layouts\Tabs\GenerationSupport
     protected function askForNewTableLayoutName()
     {
         $name = $this->console->ask( "What would you like this table layout to be called?" );
-        if( strlen( $name ) < 5 ) {
-            $this->console->error( "Please provide a name longer than 5 characters" );
+        if( strlen( $name ) < 3 ) {
+            $this->console->error( "Please provide a name longer than 3 characters" );
             return $this->askForNewTabsLayoutName();
         }
         if( is_numeric( $name[ 0 ] ) ) {

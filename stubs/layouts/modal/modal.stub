@@ -1,0 +1,26 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\LayoutBlueprint;
+use Laraview\Libs\Layouts\Modal;
+
+class [CLASS_NAME] extends Modal implements LayoutBlueprint
+{
+
+    /**
+     * @var string
+     */
+     protected $name = '[NAME]';
+
+     /**
+      * @var string
+      */
+     protected $action = '';
+
+    /**
+     * @var array
+     */
+    protected $elements = [];
+
+}

@@ -15,6 +15,7 @@ use Laraview\Libs\Elements\Radio;
 use Laraview\Libs\Elements\Select;
 use Laraview\Libs\Elements\Text;
 use Laraview\Libs\Elements\Textarea;
+use Laraview\Libs\Layouts\Modal;
 use Laraview\Libs\Layouts\Table;
 use Laraview\Libs\Layouts\Tabs;
 
@@ -50,7 +51,8 @@ class Register implements RegisterBlueprint
      */
     protected $registeredLayouts = [
         Tabs::class,
-        Table::class
+        Table::class,
+        Modal::class
     ];
 
     /**
