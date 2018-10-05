@@ -57,6 +57,7 @@ trait ElementInsertion
     /**
      * @param $element
      * @param $targetElement
+     * @return $this
      * @throws Exception
      */
     public function insertElementBefore( $element, $targetElement )
@@ -77,11 +78,13 @@ trait ElementInsertion
             $new[ $potentialTarget ] = $val;
         }
         $this->elements = $new;
+        return $this;
     }
 
     /**
      * @param $element
      * @param $targetElement
+     * @return $this
      * @throws Exception
      */
     public function insertElementAfter( $element, $targetElement )
@@ -102,6 +105,7 @@ trait ElementInsertion
             }
         }
         $this->elements = $new;
+        return $this;
     }
 
 }
