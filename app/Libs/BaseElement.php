@@ -71,7 +71,7 @@ abstract class BaseElement implements ElementBlueprint
      */
     public function valueKeyName()
     {
-        return camel_case( $this->name ) . 'Value';
+        return camel_case( preg_replace( '/[^\w\d]/', '', $this->name ) ) . 'Value';
     }
 
     /**
