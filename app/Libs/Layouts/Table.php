@@ -222,4 +222,10 @@ abstract class Table extends BaseLayout implements LayoutBlueprint
         return $this->noResultsMessage;
     }
 
+    /**
+     * @param $model
+     * @param $request
+     */
+    public function receivePayload( $model, $request ) {}
+
 }
