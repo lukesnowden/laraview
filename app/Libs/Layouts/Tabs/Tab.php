@@ -13,7 +13,8 @@ use Laraview\Libs\Traits\ElementInsertion;
 abstract class Tab implements TabBlueprint
 {
 
-    use TabBootstrap, ElementInsertion;
+    use TabBootstrap,
+        ElementInsertion;
 
     /**
      * @var string
@@ -77,7 +78,7 @@ abstract class Tab implements TabBlueprint
         $elements = [];
         foreach( $this->elements as $key => $element ) {
             $elements[ $element ] = new $element;
-            if( ! $elements[ $element ] instanceof ElementBlueprint ) {
+            if( ! $elements[ $element ] instanceof ElementBlueprint && ! $elements[ $element ] instanceof LayoutBlueprint ) {
                 throw new Exception( "{$element} must implement " . ElementBlueprint::class );
             }
         }
