@@ -28,6 +28,11 @@ abstract class Table extends BaseLayout implements LayoutBlueprint
     protected $columns = [];
 
     /**
+     * @var string
+     */
+    protected $noResultsMessage = 'No entries available';
+
+    /**
      * Table constructor.
      * @throws Exception
      */
@@ -156,6 +161,9 @@ abstract class Table extends BaseLayout implements LayoutBlueprint
         return sprintf(
             file_get_contents( __DIR__ . '/../../../stubs/partials/table_body.stub' ),
             $this->valueKeyName(),
+            $this->valueKeyName(),
+            $this->valueKeyName(),
+            $this->valueKeyName(),
             $this->valueKeyName()
         );
     }
@@ -204,6 +212,14 @@ abstract class Table extends BaseLayout implements LayoutBlueprint
     public function getValueReliantObjects()
     {
         return $this->elements();
+    }
+
+    /**
+     * @return string
+     */
+    public function noRowsMessage()
+    {
+        return $this->noResultsMessage;
     }
 
 }
