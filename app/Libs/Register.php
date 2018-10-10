@@ -130,12 +130,23 @@ class Register implements RegisterBlueprint
      */
     public function generate()
     {
+        $generated = 0;
         foreach( $this->views as $view ) {
-            $path = $this->createFileIfNotExists( $view->path() );
-            $this->saveToFile( $view->render(), $path );
-            $this->console->info( "{$path} generated..." );
+            if( ! empty( $this->console->only ) ) {
+                if( in_array( get_class( $view ), $this->console->only ) ) {
+                    $path = $this->createFileIfNotExists( $view->path() );
+                    $this->saveToFile( $view->render(), $path );
+                    $this->console->info( "{$path} generated..." );
+                    $generated++;
+                }
+            } else {
+                $path = $this->createFileIfNotExists( $view->path() );
+                $this->saveToFile( $view->render(), $path );
+                $this->console->info( "{$path} generated..." );
+                $generated++;
+            }
         }
-        $message = count( $this->views ) ? ( count( $this->views ) > 1 ? count( $this->views ) . ' views generated@' : '1 view generated!' ) : 'no views generated.';
+        $message = $generated ? ( $generated > 1 ? $generated . ' views generated' : '1 view generated!' ) : 'no views generated.';
         $this->console->info( $message );
     }
 

@@ -12,7 +12,7 @@ class LaraviewCompiler extends Command
      *
      * @var string
      */
-    protected $signature = 'laraview:compile';
+    protected $signature = 'laraview:compile {--o|--only=}';
 
     /**
      * The console command description.
@@ -20,6 +20,8 @@ class LaraviewCompiler extends Command
      * @var string
      */
     protected $description = 'Compiles attached views, regions and elements into view blade files.';
+
+    public $only = [];
 
     /**
      * Create a new command instance.
@@ -38,7 +40,27 @@ class LaraviewCompiler extends Command
      */
     public function handle()
     {
+        $this->checkForSelectedViewGeneration();
+
         app( RegisterBlueprint::class )
-            ->console( $this )->generate();
+            ->console( $this )
+            ->generate();
     }
+
+    /**
+     * @return void
+     */
+    protected function checkForSelectedViewGeneration()
+    {
+        if( $only = $this->option( 'only' ) ) {
+            foreach( array_filter( array_map( 'trim', explode( ',', $only ) ) ) as $class ) {
+                if( ! class_exists( $class ) ) {
+                    $this->error( "{$class} does not exist..." );
+                } else {
+                    $this->only[] = $class;
+                }
+            }
+        }
+    }
+
 }
