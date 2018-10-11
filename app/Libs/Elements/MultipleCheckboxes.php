@@ -34,12 +34,20 @@ abstract class MultipleCheckboxes extends BaseElement implements ElementBlueprin
 
     /**
      * @param $content
-     * @param $for
+     * @return string
+     */
+    protected function wrapper( $content )
+    {
+        return sprintf( '<div class="form-group multiple-checkboxes">%s</div>', $content );
+    }
+
+    /**
+     * @param $content
      * @return string
      */
     protected function notLabel( $content )
     {
-        return sprintf( '<label">%s</label>', $content );
+        return sprintf( '<div class="not-label">%s</div>', $content );
     }
 
     /**
@@ -52,7 +60,8 @@ abstract class MultipleCheckboxes extends BaseElement implements ElementBlueprin
         }
         $html = '';
         foreach( $this->options as $value => $text ) {
-            $html .= $this->label( $text . $this->singleElement( $value ) );
+            $this->attributes[ 'id' ] = 'checkbox_' . substr( sha1( microtime() ), 0, 5 );
+            $html .= $this->label( $text . $this->singleElement( $value ), $this->attributes[ 'id' ] );
         }
         return $html;
     }
@@ -76,12 +85,11 @@ abstract class MultipleCheckboxes extends BaseElement implements ElementBlueprin
      */
     protected function preRender()
     {
-        parent::preRender();
         $this->attributes[ 'class' ] = trim( ( isset( $this->attributes[ 'class' ] ) ? $this->attributes[ 'class' ] : '' ) . ' form-control' );
     }
 
     /**
-     * @return mixed|null|string
+     * @return string
      */
     public static function humanReadableName()
     {
