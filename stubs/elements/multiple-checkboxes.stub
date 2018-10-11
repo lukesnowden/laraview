@@ -1,0 +1,56 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Checkbox;
+
+class [CLASS_NAME] extends MultipleCheckboxes implements ElementBlueprint
+{
+
+    /**
+     * Name of input
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * Label text
+     * @var string
+     */
+    protected $label = '[LABEL]';
+
+    /**
+     * Input elements HTML attributes
+     * @var array
+     */
+    protected $attributes = [
+        [ATTRIBUTES]
+    ];
+
+    /**
+     * The checkboxes in the group [value => label]
+     * @var array
+     */
+    protected $options = [];
+
+    /**
+     * Current active values (checked)
+     * @return array
+     * use $this->data( $dotNotation = '' ) to retrieve injected data
+     */
+    public function value()
+    {
+        return [];
+    }
+
+    /**
+     * @param $model
+     * @param $request
+     */
+    public function receivePayload( $model, $request )
+    {
+        $model->{$this->name}()->sync( (array) $request->input( $this->name ) );
+    }
+
+}
