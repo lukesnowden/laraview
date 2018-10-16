@@ -8,6 +8,7 @@ use Laraview\Libs\Blueprints\LayoutBlueprint;
 use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Elements\Checkbox;
+use Laraview\Libs\Elements\Time;
 use Laraview\Libs\Elements\Date;
 use Laraview\Libs\Elements\Email;
 use Laraview\Libs\Elements\MultipleCheckboxes;
@@ -45,7 +46,8 @@ class Register implements RegisterBlueprint
         Checkbox::class,
         MultipleCheckboxes::class,
         Textarea::class,
-        Date::class
+        Date::class,
+        Time::class,
     ];
 
     /**
