@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
-        "fzaninotto/faker": "^1.8",
+        "fzaninotto/faker": "*",
         "laravel/framework": ">=5.2"
     },
     "require-dev": {
