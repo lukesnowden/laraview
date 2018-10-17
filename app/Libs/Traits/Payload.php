@@ -2,7 +2,10 @@
 
 namespace Laraview\Libs\Traits;
 
+use Closure;
+use Illuminate\View\View;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
+use Laraview\Libs\Utils\ViewDispatcher;
 use ReflectionException;
 use ReflectionClass;
 
@@ -59,6 +62,29 @@ trait Payload
             dd( $e->getMessage() );
         }
         return "{$classSimplified}.{$methodSimplified}.{$position}";
+    }
+
+    /**
+     * @param Closure $callback
+     * @return mixed
+     */
+    protected function modelDispatcher( Closure $callback )
+    {
+        $model = $this->model->query();
+
+        event( self::getEventNameFromClass( $this, __FUNCTION__ ), [ compact( 'model' ) ] );
+
+        return $callback( $model );
+    }
+
+    /**
+     * @param View $view
+     * @return \Illuminate\Contracts\View\Factory|View
+     */
+    protected function viewDispatcher( View $view )
+    {
+        $dispatcher = new ViewDispatcher( $view );
+        return $dispatcher->view();
     }
 
 }
