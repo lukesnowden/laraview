@@ -37,6 +37,11 @@ class Register implements RegisterBlueprint
     /**
      * @var array
      */
+    protected static $states = [];
+
+    /**
+     * @var array
+     */
     protected $registeredElements = [
         Text::class,
         Select::class,
@@ -58,6 +63,22 @@ class Register implements RegisterBlueprint
         Table::class,
         Modal::class
     ];
+
+    /**
+     * @param $state
+     */
+    public static function addState( $state )
+    {
+        self::$states[] = $state;
+    }
+
+    /**
+     * @return array
+     */
+    public function states()
+    {
+        return self::$states;
+    }
 
     /**
      * @return array
@@ -130,21 +151,56 @@ class Register implements RegisterBlueprint
     }
 
     /**
+     * @param $state
+     */
+    protected function setState( $state )
+    {
+        if( $state[ 'type' ] === 'session' ) {
+            $this->setSession( $state[ 'key' ], $state[ 'value' ] );
+        }
+        event( 'laraview:state-set' );
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    protected function setSession( $key, $value )
+    {
+        session()->set( $key, $value );
+    }
+
+    /**
      * @return void
      */
     public function generate()
+    {
+        if( self::$states ) {
+            foreach( self::$states as $state ) {
+                $this->setState( $state );
+                $this->generateState( $state[ 'prefix' ] ? $state[ 'prefix' ] . '.' : '' );
+            }
+        } else {
+            $this->generateState();
+        }
+    }
+
+    /**
+     * @param string $prefix
+     */
+    protected function generateState( $prefix = '' )
     {
         $generated = 0;
         foreach( $this->views as $view ) {
             if( ! empty( $this->console->only ) ) {
                 if( in_array( get_class( $view ), $this->console->only ) ) {
-                    $path = $this->createFileIfNotExists( $view->path() );
+                    $path = $this->createFileIfNotExists( $view->path( $prefix ) );
                     $this->saveToFile( $view->render(), $path );
                     $this->console->info( "{$path} generated..." );
                     $generated++;
                 }
             } else {
-                $path = $this->createFileIfNotExists( $view->path() );
+                $path = $this->createFileIfNotExists( $view->path( $prefix ) );
                 $this->saveToFile( $view->render(), $path );
                 $this->console->info( "{$path} generated..." );
                 $generated++;
