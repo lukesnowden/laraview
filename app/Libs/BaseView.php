@@ -46,10 +46,17 @@ abstract class BaseView implements ViewBlueprint
     }
 
     /**
-     * @return mixed
+     * @param null $path
+     * @return mixed|string
      */
-    public function path()
+    public function path( $path = null )
     {
+        if( ! is_null( $path ) ) {
+            if( ! $this->origPath ) {
+                $this->origPath = $this->path;
+            }
+            return $this->path = $path . $this->origPath;
+        }
         return $this->path;
     }
 
