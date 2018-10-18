@@ -324,6 +324,7 @@ class Register implements RegisterBlueprint
                     }
                 }
                 $view->with( $data );
+                event( 'laraview:view-composer', [ compact( 'view', 'viewObject' ) ] );
             }
         });
     }
