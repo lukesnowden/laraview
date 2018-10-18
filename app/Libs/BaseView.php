@@ -127,10 +127,11 @@ abstract class BaseView implements ViewBlueprint
      */
     public function render()
     {
+        $render = $this->baseView;
         foreach( $this->regions as $key => $region ) {
-            $this->baseView = str_replace( $region->placeholder(), $region->render(), $this->baseView );
+            $render = str_replace( $region->placeholder(), $region->render(), $render );
         }
-        return $this->baseView;
+        return $render;
     }
 
     /**
