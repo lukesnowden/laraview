@@ -16,6 +16,11 @@ abstract class BaseView implements ViewBlueprint
     protected $path;
 
     /**
+     * @var
+     */
+    protected $origPath = '';
+
+    /**
      * @var array
      */
     protected $regions = [];
