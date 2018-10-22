@@ -3,9 +3,9 @@
 namespace [NAMESPACE];
 
 use Laraview\Libs\Blueprints\ElementBlueprint;
-use Laraview\Libs\Elements\Textarea;
+use Laraview\Libs\Elements\Number;
 
-class [CLASS_NAME] extends Textarea implements ElementBlueprint
+class [CLASS_NAME] extends Number implements ElementBlueprint
 {
 
     /**

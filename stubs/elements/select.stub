@@ -35,12 +35,11 @@ class [CLASS_NAME] extends Select implements ElementBlueprint
     ];
 
     /**
-     * use $this->data( $dotNotation = '' ) to retrieve injected data
      * @return mixed
      */
     public function value()
     {
-        parent::value();
+        return old( $this->name ) ?: (string) $this->data( "model.{$this->name}" );
     }
 
     /**

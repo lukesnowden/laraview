@@ -30,20 +30,10 @@ class [CLASS_NAME] extends Checkbox implements ElementBlueprint
 
     /**
      * @return mixed
-     * use $this->data( $dotNotation = '' ) to retrieve injected data
      */
     public function value()
     {
-        parent::value();
-    }
-
-    /**
-     * Determines if the element is checked or not
-     * @return bool
-     */
-    public function status()
-    {
-        return false;
+        return '1';
     }
 
     /**
@@ -53,6 +43,15 @@ class [CLASS_NAME] extends Checkbox implements ElementBlueprint
     public function receivePayload( $model, $request )
     {
         $model->{$this->name} = $request->input( $this->name );
+    }
+
+    /**
+     * Determines if the element is checked or not
+     * @return bool
+     */
+    public function status()
+    {
+        return old( $this->name ) ?: (boolean) $this->data( "model.{$this->name}" );
     }
 
 }
