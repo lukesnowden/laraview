@@ -25,4 +25,12 @@ class [CLASS_NAME] extends Table implements LayoutBlueprint
         parent::displaying();
     }
 
+    /**
+     * @return mixed
+     */
+    public function tfootContent()
+    {
+        return $this->rows->appends( request()->query() )->links();
+    }
+
 }
