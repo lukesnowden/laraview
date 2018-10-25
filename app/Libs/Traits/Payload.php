@@ -68,7 +68,7 @@ trait Payload
      * @param Closure $callback
      * @return mixed
      */
-    protected function modelDispatcher( Closure $callback )
+    public function modelDispatcher( Closure $callback )
     {
         $model = $this->model->query();
 
