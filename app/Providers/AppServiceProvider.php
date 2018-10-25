@@ -8,7 +8,6 @@ use Laraview\Console\Commands\LaraviewGenerateElement;
 use Laraview\Console\Commands\LaraviewGenerateLayout;
 use Laraview\Console\Commands\LaraviewGenerateRegion;
 use Laraview\Console\Commands\LaraviewGenerateView;
-use Laraview\Laraview\CustomerEdit\CustomerEditView;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Register;
 
@@ -21,7 +20,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton( RegisterBlueprint::class, Register::class );
         $this->app[ RegisterBlueprint::class ]->viewComposer();
-        $this->app[ RegisterBlueprint::class ]->attachView( new CustomerEditView() );
     }
 
     /**
