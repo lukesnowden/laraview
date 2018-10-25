@@ -144,6 +144,18 @@ class Register implements RegisterBlueprint
     }
 
     /**
+     * @param array $views
+     * @return Register
+     */
+    public function attachViews( array $views ) : self
+    {
+        foreach( $views as $view ) {
+            $this->attachView( $view );
+        }
+        return $this;
+    }
+
+    /**
      * @param $view
      * @return ViewBlueprint
      */
