@@ -8,6 +8,7 @@ use Laraview\Libs\Blueprints\LayoutBlueprint;
 use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Elements\Checkbox;
+use Laraview\Libs\Elements\File;
 use Laraview\Libs\Elements\Number;
 use Laraview\Libs\Elements\Time;
 use Laraview\Libs\Elements\Date;
@@ -55,6 +56,7 @@ class Register implements RegisterBlueprint
         Textarea::class,
         Date::class,
         Time::class,
+        File::class,
     ];
 
     /**
@@ -63,7 +65,7 @@ class Register implements RegisterBlueprint
     protected $registeredLayouts = [
         Tabs::class,
         Table::class,
-        Modal::class
+        Modal::class,
     ];
 
     /**

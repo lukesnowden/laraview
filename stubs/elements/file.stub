@@ -1,0 +1,48 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\File;
+
+class [CLASS_NAME] extends File implements ElementBlueprint
+{
+
+    /**
+     * Name of input
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * Label text
+     * @var string
+     */
+    protected $label = '[LABEL]';
+
+    /**
+     * Input elements HTML attributes
+     * @var array
+     */
+    protected $attributes = [
+        [ATTRIBUTES]
+    ];
+
+    /**
+     * @return mixed
+     */
+    public function value()
+    {
+        return old( $this->name ) ?: $this->data( "model.{$this->name}" );
+    }
+
+    /**
+     * @param $model
+     * @param $request
+     */
+    public function receivePayload( $model, $request )
+    {
+        $model->{$this->name} = $request->input( $this->name );
+    }
+
+}
