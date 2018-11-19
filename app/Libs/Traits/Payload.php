@@ -66,11 +66,12 @@ trait Payload
 
     /**
      * @param Closure $callback
+     * @param null $model
      * @return mixed
      */
-    public function modelDispatcher( Closure $callback )
+    public function modelDispatcher( Closure $callback, $model = null )
     {
-        $model = $this->model->query();
+        $model = ! is_null( $model ) ? $model : $this->model->query();
 
         event( self::getEventNameFromClass( $this, __FUNCTION__ ), [ compact( 'model' ) ] );
 
