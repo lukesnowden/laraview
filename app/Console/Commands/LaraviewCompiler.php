@@ -40,6 +40,7 @@ class LaraviewCompiler extends Command
      */
     public function handle()
     {
+        event( 'laraview:compile' );
         $this->checkForSelectedViewGeneration();
 
         app( RegisterBlueprint::class )
