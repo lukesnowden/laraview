@@ -48,7 +48,7 @@ class [CLASS_NAME] extends Select implements ElementBlueprint
      */
     public function receivePayload( $model, $request )
     {
-        $model->{$this->name} = $request->input( $this->name );
+        $model->{$this->name} = (string) $request->input( $this->name );
     }
 
 }

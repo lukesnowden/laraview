@@ -183,7 +183,7 @@ class Register implements RegisterBlueprint
      */
     protected function setSession( $key, $value )
     {
-        session()->set( $key, $value );
+        session()->put( $key, $value );
     }
 
     /**
@@ -369,6 +369,25 @@ class Register implements RegisterBlueprint
         foreach( $view->elements() as $element ) {
             $element->receivePayload( $model, $request );
         }
+    }
+
+    /**
+     * @param $viewClass
+     * @param $request
+     * @return array
+     */
+    public function getValidation( $viewClass, $request )
+    {
+        $view = new $viewClass;
+        $rules = [];
+        $messages = [];
+        foreach( $view->elements() as $element ) {
+            $element->beforeValidation( $request );
+            $data = $element->getValidationData();
+            $rules[ $data[ 'name' ] ] = $data[ 'rules' ];
+            $messages = array_merge( $messages, $data[ 'messages' ] );
+        }
+        return compact( 'rules', 'messages' );
     }
 
 }

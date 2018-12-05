@@ -37,6 +37,16 @@ abstract class BaseElement implements ElementBlueprint
     protected $value = null;
 
     /**
+     * @var array
+     */
+    protected $rules = [];
+
+    /**
+     * @var array
+     */
+    protected $messages = [];
+
+    /**
      * @return string
      */
     protected function attributes()
@@ -46,6 +56,18 @@ abstract class BaseElement implements ElementBlueprint
             $attributes .= "{$name}=\"{$value}\" ";
         }
         return trim( $attributes );
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidationData()
+    {
+        return [
+            'name' => $this->name,
+            'rules' => $this->rules,
+            'messages' => $this->messages
+        ];
     }
 
     /**
@@ -127,6 +149,15 @@ abstract class BaseElement implements ElementBlueprint
     public function getValueReliantObjects()
     {
         return [ $this ];
+    }
+
+    /**
+     * @return void
+     * @param $request
+     */
+    public function beforeValidation( Request $request )
+    {
+        //
     }
 
     /**

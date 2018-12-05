@@ -4,6 +4,7 @@ namespace Laraview\Libs\Traits;
 
 use Exception;
 use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Blueprints\LayoutBlueprint;
 
 trait ElementInsertion
 {
@@ -50,6 +51,25 @@ trait ElementInsertion
             $this->elements[ $element ]->region( $this->region );
         } else {
             $this->elements[ $element ]->region( $this );
+        }
+        return $this;
+    }
+
+    /**
+     * @param $layout
+     * @return $this
+     * @throws Exception
+     */
+    public function insertLayout( $layout )
+    {
+        $this->elements[ $layout ] = new $layout;
+        if( ! $this->elements[ $layout ] instanceof LayoutBlueprint ) {
+            throw new Exception( "Layout {$layout} must implement " . LayoutBlueprint::class );
+        }
+        if( property_exists( $this, 'region' ) ) {
+            $this->elements[ $layout ]->region( $this->region );
+        } else {
+            $this->elements[ $layout ]->region( $this );
         }
         return $this;
     }

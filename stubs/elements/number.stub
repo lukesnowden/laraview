@@ -42,7 +42,7 @@ class [CLASS_NAME] extends Number implements ElementBlueprint
      */
     public function receivePayload( $model, $request )
     {
-        $model->{$this->name} = $request->input( $this->name );
+        $model->{$this->name} = (float) $request->input( $this->name );
     }
 
 }

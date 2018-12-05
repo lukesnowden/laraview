@@ -29,7 +29,8 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
+            "providers": [
+                "Laraview\\Providers\\AppServiceProvider"
             ]
         }
     },

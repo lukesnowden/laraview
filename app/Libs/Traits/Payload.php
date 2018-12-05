@@ -3,6 +3,7 @@
 namespace Laraview\Libs\Traits;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Utils\ViewDispatcher;
@@ -86,6 +87,16 @@ trait Payload
     {
         $dispatcher = new ViewDispatcher( $view );
         return $dispatcher->view();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function query()
+    {
+        return $this->modelDispatcher( function( Builder $builder ) {
+            return $builder;
+        } );
     }
 
 }
