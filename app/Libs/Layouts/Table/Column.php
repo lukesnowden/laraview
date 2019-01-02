@@ -65,4 +65,22 @@ abstract class Column
         return trim( $attributes );
     }
 
+    /**
+     * @param $row
+     * @return string
+     */
+    public function openingTag( $row )
+    {
+        return '<td>';
+    }
+
+    /**
+     * @param $row
+     * @return string
+     */
+    public function closingTag( $row )
+    {
+        return '</td>';
+    }
+
 }

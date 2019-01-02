@@ -5,11 +5,14 @@ namespace Laraview\Libs\Elements\Traits\Formats;
 trait TabsBootstrap
 {
 
+    protected $name = 'tab';
+
     /**
      * @return mixed
      */
     public function render()
     {
+        $this->name .= substr( sha1( microtime( true ) ), 0, 5 );
         return $this->headerWrapper(
                 $this->headers()
             ) .
@@ -24,7 +27,11 @@ trait TabsBootstrap
      */
     protected function headerWrapper( $content )
     {
-        return sprintf( '<ul class="nav nav-tabs" id="myTab" role="tablist">%s</ul>', $content );
+        return sprintf(
+            '<ul class="nav nav-tabs" id="%s" role="tablist">%s</ul>',
+            $this->name,
+            $content
+        );
     }
 
     /**
@@ -33,7 +40,11 @@ trait TabsBootstrap
      */
     protected function bodyWrapper( $content )
     {
-        return sprintf( '<div class="tab-content" id="myTabContent">%s</div>', $content );
+        return sprintf(
+            '<div class="tab-content" id="%sContent">%s</div>',
+            $this->name,
+            $content
+        );
     }
 
     /**

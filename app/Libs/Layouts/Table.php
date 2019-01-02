@@ -164,6 +164,8 @@ abstract class Table extends BaseLayout implements LayoutBlueprint
             $this->valueKeyName(),
             $this->valueKeyName(),
             $this->valueKeyName(),
+            $this->valueKeyName(),
+            $this->valueKeyName(),
             $this->valueKeyName()
         );
     }
@@ -220,6 +222,24 @@ abstract class Table extends BaseLayout implements LayoutBlueprint
     public function noRowsMessage()
     {
         return $this->noResultsMessage;
+    }
+
+    /**
+     * @param $row
+     * @return string
+     */
+    public function openingRowTag( $row )
+    {
+        return '<tr>';
+    }
+
+    /**
+     * @param $row
+     * @return string
+     */
+    public function closingRowTag( $row )
+    {
+        return '</tr>';
     }
 
     /**
