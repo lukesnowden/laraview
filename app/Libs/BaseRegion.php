@@ -52,6 +52,11 @@ abstract class BaseRegion implements RegionBlueprint
     {
         $html = '';
         foreach( $this->elements as $element ) {
+            if( method_exists( $element, 'active' ) ) {
+                if( ! $element->active() ) {
+                    continue;
+                }
+            }
             $html .= $element->render() . "\n";
         }
         return $html;

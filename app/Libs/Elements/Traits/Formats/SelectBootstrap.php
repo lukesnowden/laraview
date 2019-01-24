@@ -24,7 +24,7 @@ trait SelectBootstrap
     {
         $html = '';
         foreach( $this->options as $value => $text ) {
-            $selected = "{{ \${$this->valueKeyName()} === '{$value}' ? 'selected' : '' }}";
+            $selected = "{{ \${$this->valueKeyName()} === '" . addslashes($value) . "' ? 'selected' : '' }}";
             $html .= sprintf( '<option %s value="%s">%s</option>', $selected, $value, $text ) . "\n";
         }
         return $html;

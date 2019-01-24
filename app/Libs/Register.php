@@ -333,6 +333,11 @@ class Register implements RegisterBlueprint
                 $viewObject->setViewData( $view->getData() );
                 $data = [];
                 foreach( $viewObject->elements() as $element ) {
+                    if( method_exists( $element, 'active' ) ) {
+                        if( ! $element->active() ) {
+                            continue;
+                        }
+                    }
                     $element->displaying();
                     $data[ $element->valueKeyName() ] = old( $element->name() ) ? old( $element->name() ) : $element->value();
                     if( method_exists( $element, 'statusKeyName' ) ) {
@@ -367,6 +372,11 @@ class Register implements RegisterBlueprint
     {
         $view = new $viewClass;
         foreach( $view->elements() as $element ) {
+            if( method_exists( $element, 'active' ) ) {
+                if( ! $element->active() ) {
+                    continue;
+                }
+            }
             $element->receivePayload( $model, $request );
         }
     }
@@ -382,6 +392,11 @@ class Register implements RegisterBlueprint
         $rules = [];
         $messages = [];
         foreach( $view->elements() as $element ) {
+            if( method_exists( $element, 'active' ) ) {
+                if( ! $element->active() ) {
+                    continue;
+                }
+            }
             $element->beforeValidation( $request );
             $data = $element->getValidationData();
             $rules[ $data[ 'name' ] ] = $data[ 'rules' ];
