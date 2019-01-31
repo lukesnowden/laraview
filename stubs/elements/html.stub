@@ -1,0 +1,31 @@
+<?php
+
+namespace [NAMESPACE];
+
+use Laraview\Libs\Blueprints\ElementBlueprint;
+use Laraview\Libs\Elements\Html;
+
+class [CLASS_NAME] extends Html implements ElementBlueprint
+{
+
+    /**
+     * Name of input
+     * @var string
+     */
+    protected $name = '[NAME]';
+
+    /**
+     * Label text
+     * @var string
+     */
+    protected $label = '[LABEL]';
+
+    /**
+     * HTMl
+     */
+    protected function element()
+    {
+        return '<p></p>';
+    }
+
+}

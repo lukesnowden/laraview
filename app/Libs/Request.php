@@ -13,6 +13,11 @@ abstract class Request extends FormRequest
     protected $view;
 
     /**
+     * @var string
+     */
+    protected $segment = '';
+
+    /**
      * @var array
      */
     protected $validation = [
@@ -63,6 +68,14 @@ abstract class Request extends FormRequest
     public function messages()
     {
         return $this->validation[ 'messages' ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getSegment()
+    {
+        return $this->segment;
     }
 
 }

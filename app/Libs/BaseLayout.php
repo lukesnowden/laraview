@@ -14,6 +14,11 @@ abstract class BaseLayout implements LayoutBlueprint
     protected $region;
 
     /**
+     * @var string
+     */
+    protected $segment = '';
+
+    /**
      * @param RegionBlueprint $region
      */
     public function region( RegionBlueprint $region )
@@ -40,6 +45,23 @@ abstract class BaseLayout implements LayoutBlueprint
             return $data;
         }
         return array_get( $data, $dotNotationIndex );
+    }
+
+    /**
+     * @param $segment
+     * @return bool
+     */
+    public function isFromSegment( $segment )
+    {
+        return $segment === $this->segment;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotAssignedToASegment()
+    {
+        return ! (boolean) $this->segment;
     }
 
     /**

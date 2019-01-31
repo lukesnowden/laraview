@@ -47,6 +47,11 @@ abstract class BaseElement implements ElementBlueprint
     protected $messages = [];
 
     /**
+     * @var string
+     */
+    protected $segment = '';
+
+    /**
      * @return string
      */
     protected function attributes()
@@ -158,6 +163,23 @@ abstract class BaseElement implements ElementBlueprint
     public function beforeValidation( Request $request )
     {
         //
+    }
+
+    /**
+     * @param $segment
+     * @return bool
+     */
+    public function isFromSegment( $segment )
+    {
+        return $segment === $this->segment;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotAssignedToASegment()
+    {
+        return ! (boolean) $this->segment;
     }
 
     /**

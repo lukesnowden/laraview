@@ -111,7 +111,7 @@ abstract class Modal extends BaseLayout implements LayoutBlueprint
      */
     protected function renderElements()
     {
-        $html = '';
+        $html = $this->method === 'POST' ? ' @csrf ' : '';
         foreach( $this->elements as $element ) {
             $html .= $element->render() . "\n";
         }

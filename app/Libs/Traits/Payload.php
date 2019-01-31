@@ -19,10 +19,10 @@ trait Payload
      * @param $view
      * @param $event
      */
-    protected function dispatchPayload( $model, $request, $view, $event )
+    protected function dispatchPayload( $model, $request, $view, $event, $segment = null )
     {
         // send the data to all the elements
-        app( RegisterBlueprint::class )->dispatchPayload( $view, $model, $request );
+        app( RegisterBlueprint::class )->dispatchPayload( $view, $model, $request, $segment );
 
         // notify application of saving
         event( $this->getEventName( $event ), [ compact( 'model', 'request' ) ] );

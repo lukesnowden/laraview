@@ -119,6 +119,39 @@ abstract class BaseView implements ViewBlueprint
     }
 
     /**
+     * @return array
+     */
+    public function elementsNotAssignedToASegment()
+    {
+        $elements = [];
+        foreach( $this->regions as $region ) {
+            foreach( $region->getValueReliantObjects() as $element ) {
+                if( $element->isNotAssignedToASegment() ) {
+                    $elements[] = $element;
+                }
+            }
+        }
+        return $elements;
+    }
+
+    /**
+     * @param $segment
+     * @return array
+     */
+    public function elementsFromSegment( $segment )
+    {
+        $elements = [];
+        foreach( $this->regions as $region ) {
+            foreach( $region->getValueReliantObjects() as $element ) {
+                if( $element->isFromSegment( $segment ) ) {
+                    $elements[] = $element;
+                }
+            }
+        }
+        return $elements;
+    }
+
+    /**
      * @param array $data
      */
     public function setViewData( array $data )

@@ -9,6 +9,7 @@ use Laraview\Libs\Blueprints\ViewBlueprint;
 use Laraview\Libs\Blueprints\RegisterBlueprint;
 use Laraview\Libs\Elements\Checkbox;
 use Laraview\Libs\Elements\File;
+use Laraview\Libs\Elements\Html;
 use Laraview\Libs\Elements\Number;
 use Laraview\Libs\Elements\Time;
 use Laraview\Libs\Elements\Date;
@@ -57,6 +58,7 @@ class Register implements RegisterBlueprint
         Date::class,
         Time::class,
         File::class,
+        Html::class
     ];
 
     /**
@@ -367,18 +369,21 @@ class Register implements RegisterBlueprint
      * @param $viewClass
      * @param $model
      * @param $request
+     * @param null $segment
      */
-    public function dispatchPayload( $viewClass, $model, $request )
+    public function dispatchPayload( $viewClass, $model, $request, $segment = null )
     {
-        $view = new $viewClass;
-        foreach( $view->elements() as $element ) {
-            if( method_exists( $element, 'active' ) ) {
-                if( ! $element->active() ) {
-                    continue;
+        tap( (new $viewClass), function( BaseView $view ) use( $model, $request, $segment ) {
+            $elements = is_null( $segment ) ? $view->elementsNotAssignedToASegment() : $view->elementsFromSegment( $segment );
+            foreach( $elements as $element ) {
+                if( method_exists( $element, 'active' ) ) {
+                    if( ! $element->active() ) {
+                        continue;
+                    }
                 }
+                $element->receivePayload( $model, $request );
             }
-            $element->receivePayload( $model, $request );
-        }
+        });
     }
 
     /**
@@ -391,7 +396,9 @@ class Register implements RegisterBlueprint
         $view = new $viewClass;
         $rules = [];
         $messages = [];
-        foreach( $view->elements() as $element ) {
+        $elements = $request->getSegment() ? $view->elementsFromSegment( $request->getSegment() ) : $view->elementsNotAssignedToASegment();
+
+        foreach( $elements as $element ) {
             if( method_exists( $element, 'active' ) ) {
                 if( ! $element->active() ) {
                     continue;
